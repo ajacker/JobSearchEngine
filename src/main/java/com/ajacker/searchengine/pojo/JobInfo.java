@@ -10,7 +10,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
  * @author ajacker
  * @date 2019/10/27 22:17
  */
-@Document(indexName = "jobInfo")
+@Document(indexName = "jobinfo")
 @Data
 public class JobInfo {
     @Id

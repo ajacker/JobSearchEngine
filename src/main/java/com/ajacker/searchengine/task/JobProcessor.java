@@ -1,6 +1,8 @@
 package com.ajacker.searchengine.task;
 
 import com.ajacker.searchengine.pojo.JobInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
@@ -20,16 +22,22 @@ import java.util.List;
 @Component
 public class JobProcessor implements PageProcessor {
     private static String url = "https://search.51job.com/list/000000,000000,0000,00,9,99,%2520,2,1.html";
+    @Autowired
+    private ElasticSearchPipeLine elasticSearchPipeLine;
+
+
     private Site site = Site.me()
             .setCharset("gbk")
             .setRetryTimes(3)
             .setRetrySleepTime(1000)
             .setSleepTime(1000);
 
-    public static void main(String[] args) {
+    @Scheduled(initialDelay = 1000, fixedDelay = 100 * 1000)
+    public void process() {
         Spider.create(new JobProcessor())
                 .addUrl(url)
                 .setScheduler(new QueueScheduler())
+                .addPipeline(elasticSearchPipeLine)
                 .thread(1)
                 .run();
     }
@@ -132,7 +140,8 @@ public class JobProcessor implements PageProcessor {
         }
         jobInfo.setExpMin(expMin);
         jobInfo.setExpMax(expMax);
-        System.out.println(jobInfo);
+        //保存数据
+        page.putField("jobInfo", jobInfo);
     }
 
     @Override

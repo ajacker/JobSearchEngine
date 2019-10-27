@@ -9,5 +9,6 @@ import org.springframework.stereotype.Component;
  * @date 2019/10/27 23:00
  */
 @Component
-public interface JobInfoDao extends ElasticsearchRepository<JobInfo, Long> {
+public interface IJobInfoDao extends ElasticsearchRepository<JobInfo, Long> {
+
 }
