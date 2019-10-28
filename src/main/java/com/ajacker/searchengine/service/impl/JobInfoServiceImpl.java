@@ -3,6 +3,7 @@ package com.ajacker.searchengine.service.impl;
 import com.ajacker.searchengine.dao.IJobInfoDao;
 import com.ajacker.searchengine.pojo.JobInfo;
 import com.ajacker.searchengine.service.IJobInfoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,12 +14,8 @@ import java.util.List;
  */
 @Service
 public class JobInfoServiceImpl implements IJobInfoService {
-    private final IJobInfoDao jobInfoDao;
-
-    public JobInfoServiceImpl(IJobInfoDao jobInfoDao) {
-        this.jobInfoDao = jobInfoDao;
-    }
-
+    @Autowired
+    private IJobInfoDao jobInfoDao;
 
     @Override
     public void save(JobInfo jobInfo) {

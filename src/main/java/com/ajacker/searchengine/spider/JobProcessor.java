@@ -1,14 +1,15 @@
-package com.ajacker.searchengine.task;
+package com.ajacker.searchengine.spider;
 
 import com.ajacker.searchengine.pojo.JobInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
-import us.codecraft.webmagic.scheduler.QueueScheduler;
 import us.codecraft.webmagic.selector.Html;
 import us.codecraft.webmagic.selector.Selectable;
 
@@ -19,11 +20,17 @@ import java.util.List;
  * @author ajacker
  * @date 2019/10/27 22:18
  */
+@Slf4j
 @Component
 public class JobProcessor implements PageProcessor {
-    private static String url = "https://search.51job.com/list/000000,000000,0000,00,9,99,%2520,2,1.html";
     @Autowired
     private ElasticSearchPipeLine elasticSearchPipeLine;
+    @Autowired
+    private MyRedisScheduler scheduler;
+    @Value("${spider.UUID}")
+    private String UUID;
+    @Value("${spider.startUrl}")
+    private String url;
 
 
     private Site site = Site.me()
@@ -34,9 +41,11 @@ public class JobProcessor implements PageProcessor {
 
     @Scheduled(initialDelay = 1000, fixedDelay = 100 * 1000)
     public void process() {
+        log.info("定时爬虫执行...当前UUID:" + UUID);
         Spider.create(new JobProcessor())
+                .setUUID(UUID)
                 .addUrl(url)
-                .setScheduler(new QueueScheduler())
+                .setScheduler(scheduler)
                 .addPipeline(elasticSearchPipeLine)
                 .thread(1)
                 .run();
@@ -62,11 +71,15 @@ public class JobProcessor implements PageProcessor {
             page.addTargetRequest(nextPageUrl);
         } else {
             //如果是详情页，爬取数据
-            this.saveJobInfo(page);
+            try {
+                this.saveJobInfo(page);
+            } catch (Exception e) {
+                log.error("当前页面爬取出错：" + page.getUrl());
+            }
         }
     }
 
-    private void saveJobInfo(Page page) {
+    private void saveJobInfo(Page page) throws Exception {
         //准备要封装的对象
         JobInfo jobInfo = new JobInfo();
         Html html = page.getHtml();

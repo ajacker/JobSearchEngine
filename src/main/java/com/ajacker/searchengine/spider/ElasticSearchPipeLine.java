@@ -1,4 +1,4 @@
-package com.ajacker.searchengine.task;
+package com.ajacker.searchengine.spider;
 
 import com.ajacker.searchengine.pojo.JobInfo;
 import com.ajacker.searchengine.service.IJobInfoService;
