@@ -4,7 +4,6 @@ import com.ajacker.searchengine.pojo.JobInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
@@ -39,7 +38,7 @@ public class JobProcessor implements PageProcessor {
             .setRetrySleepTime(1000)
             .setSleepTime(1000);
 
-    @Scheduled(initialDelay = 1000, fixedDelay = 100 * 1000)
+    //@Scheduled(initialDelay = 1000 * 1000, fixedDelay = 100 * 1000)
     public void process() {
         log.info("定时爬虫执行...当前UUID:" + UUID);
         Spider.create(new JobProcessor())

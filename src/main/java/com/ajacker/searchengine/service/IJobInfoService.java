@@ -22,4 +22,6 @@ public interface IJobInfoService {
      * @param jobInfo
      */
     void saveAll(List<JobInfo> jobInfo);
+
+    void search(String keyword, String salary, String time, String education, String exp, String place);
 }

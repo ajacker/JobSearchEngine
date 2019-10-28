@@ -38,6 +38,7 @@ public class JobInfo {
     private Integer expMax;
     @Field(index = true, store = true, type = FieldType.Text)
     private String url;
+    //TODO: 换成Date类型
     @Field(index = true, store = true, type = FieldType.Text)
     private String time;
 }
