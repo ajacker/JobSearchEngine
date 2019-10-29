@@ -45,11 +45,11 @@ public class JobInfoServiceImpl implements IJobInfoService {
         int page = 1;
         Page<JobInfo> pages = jobInfoDao.findBySalaryMinGreaterThanAndSalaryMaxLessThanAndExpMinGreaterThanAndExpMaxLessThanAndJobInfoLikeAndJobNameLikeAndJobAddrLike(salaryMin,
                 salaryMax, expMin, expMax, keyword, keyword, place, PageRequest.of(page - 1, 30));
-        ;
         System.out.println(pages.getTotalElements());
         pages = jobInfoDao.findByJobNameLike(keyword, PageRequest.of(page - 1, 30));
         System.out.println(pages.getTotalElements());
         pages.forEach(System.out::println);
+
 
     }
 }

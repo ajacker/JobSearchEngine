@@ -4,15 +4,22 @@ import com.ajacker.searchengine.pojo.JobInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
+import us.codecraft.webmagic.downloader.HttpClientDownloader;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.selector.Html;
 import us.codecraft.webmagic.selector.Selectable;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,6 +33,8 @@ public class JobProcessor implements PageProcessor {
     private ElasticSearchPipeLine elasticSearchPipeLine;
     @Autowired
     private MyRedisScheduler scheduler;
+    @Autowired
+    private HttpClientDownloader httpClientDownloader;
     @Value("${spider.UUID}")
     private String UUID;
     @Value("${spider.startUrl}")
@@ -36,18 +45,20 @@ public class JobProcessor implements PageProcessor {
             .setCharset("gbk")
             .setRetryTimes(3)
             .setRetrySleepTime(1000)
-            .setSleepTime(1000);
+            .setSleepTime(200);
 
-    //@Scheduled(initialDelay = 1000 * 1000, fixedDelay = 100 * 1000)
+    @Scheduled(initialDelay = 1000, fixedDelay = 100 * 1000)
     public void process() {
         log.info("定时爬虫执行...当前UUID:" + UUID);
+
         Spider.create(new JobProcessor())
                 .setUUID(UUID)
                 .addUrl(url)
                 .setScheduler(scheduler)
                 .addPipeline(elasticSearchPipeLine)
-                .thread(1)
-                .run();
+                .setDownloader(httpClientDownloader)
+                .thread(4)
+                .runAsync();
     }
 
     @Override
@@ -124,9 +135,17 @@ public class JobProcessor implements PageProcessor {
         jobInfo.setSalaryMin(min);
         jobInfo.setSalaryMax(max);
         //发布时间
-        Arrays.stream(infos).filter(s -> s.contains("发布")).findFirst().ifPresent(
-                t -> jobInfo.setTime(t.replace("发布", "")
-                        .replaceAll("\u00a0", ""))
+        Arrays.stream(infos).filter(s -> s.contains("发布")).findFirst().ifPresentOrElse(
+                t -> {
+                    try {
+                        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        Date date = dateFormat.parse(LocalDate.now().getYear() + "-" + t.replace("发布", "")
+                                .replaceAll("\u00a0", ""));
+                        jobInfo.setTime(date);
+                    } catch (ParseException e) {
+                        jobInfo.setTime(new Date());
+                    }
+                }, () -> jobInfo.setTime(new Date())
         );
         //工作经验
         String exp = infos[1].replaceAll("\u00a0", "");
