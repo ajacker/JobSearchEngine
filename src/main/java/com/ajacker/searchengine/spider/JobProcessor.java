@@ -43,11 +43,11 @@ public class JobProcessor implements PageProcessor {
 
     private Site site = Site.me()
             .setCharset("gbk")
-            .setRetryTimes(3)
+            .setRetryTimes(5)
             .setRetrySleepTime(1000)
             .setSleepTime(200);
 
-    @Scheduled(initialDelay = 1000, fixedDelay = 100 * 1000)
+    @Scheduled(initialDelay = 1000, fixedDelay = 10000 * 1000)
     public void process() {
         log.info("定时爬虫执行...当前UUID:" + UUID);
 

@@ -29,7 +29,6 @@ public class MyRedisScheduler extends DuplicateRemovedScheduler implements Monit
     private String exceptUrl;
     @Autowired
     private JedisPool pool;
-
     @Override
     public void resetDuplicateCheck(Task task) {
         try (Jedis jedis = this.pool.getResource()) {

@@ -18,8 +18,8 @@ import java.util.Date;
 @Data
 public class JobInfo {
     @Id
-    @Field(store = true, type = FieldType.Long)
-    private Long id;
+    @Field(store = true, type = FieldType.Text)
+    private String url;
     @Field(store = true, analyzer = "ik_smart", searchAnalyzer = "ik_smart", type = FieldType.Text)
     private String companyName;
     @Field(store = true, analyzer = "ik_smart", searchAnalyzer = "ik_smart", type = FieldType.Text)
@@ -40,8 +40,6 @@ public class JobInfo {
     private Integer expMin;
     @Field(store = true, type = FieldType.Integer)
     private Integer expMax;
-    @Field(store = true, type = FieldType.Text)
-    private String url;
     @Field(type = FieldType.Date, store = true,
             format = DateFormat.custom, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

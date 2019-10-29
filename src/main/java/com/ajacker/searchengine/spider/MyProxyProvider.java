@@ -24,7 +24,7 @@ public class MyProxyProvider implements ProxyProvider {
 
     @Override
     public void returnProxy(Proxy proxy, Page page, Task task) {
-        lastStatus = page.isDownloadSuccess();
+        lastStatus = page.isDownloadSuccess() && page.getStatusCode() == 200;
         if (!lastStatus) {
             RestTemplate restTemplate = new RestTemplate();
             String u = baseUrl + "/delete?proxy=" + proxy.getHost() + ":" + proxy.getPort();

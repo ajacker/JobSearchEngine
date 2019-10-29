@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * @date 2019/10/27 23:00
  */
 @Component
-public interface IJobInfoDao extends ElasticsearchRepository<JobInfo, Long> {
+public interface IJobInfoDao extends ElasticsearchRepository<JobInfo, String> {
 
 
     Page<JobInfo> findBySalaryMinGreaterThanAndSalaryMaxLessThanAndExpMinGreaterThanAndExpMaxLessThanAndJobInfoLikeAndJobNameLikeAndJobAddrLike(int salaryMin, int salaryMax, int expMin, int expMax, String keyword, String keyword1, String place, Pageable of);
