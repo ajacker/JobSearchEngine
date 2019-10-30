@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
-import us.codecraft.webmagic.downloader.HttpClientDownloader;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.selector.Html;
 import us.codecraft.webmagic.selector.Selectable;
@@ -34,7 +33,7 @@ public class JobProcessor implements PageProcessor {
     @Autowired
     private MyRedisScheduler scheduler;
     @Autowired
-    private HttpClientDownloader httpClientDownloader;
+    private MyDownloader downloader;
     @Value("${spider.UUID}")
     private String UUID;
     @Value("${spider.startUrl}")
@@ -43,7 +42,7 @@ public class JobProcessor implements PageProcessor {
 
     private Site site = Site.me()
             .setCharset("gbk")
-            .setRetryTimes(5)
+            .setCycleRetryTimes(30)
             .setRetrySleepTime(1000)
             .setSleepTime(200);
 
@@ -56,8 +55,8 @@ public class JobProcessor implements PageProcessor {
                 .addUrl(url)
                 .setScheduler(scheduler)
                 .addPipeline(elasticSearchPipeLine)
-                .setDownloader(httpClientDownloader)
-                .thread(4)
+                .setDownloader(downloader)
+                .thread(5)
                 .runAsync();
     }
 

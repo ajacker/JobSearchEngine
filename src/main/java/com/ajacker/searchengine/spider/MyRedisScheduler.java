@@ -39,9 +39,6 @@ public class MyRedisScheduler extends DuplicateRemovedScheduler implements Monit
 
     @Override
     public boolean isDuplicate(Request request, Task task) {
-        if (request.getUrl().equals(exceptUrl)) {
-            return false;
-        }
         boolean isDuplicate;
         try (Jedis jedis = this.pool.getResource()) {
             isDuplicate = jedis.sadd(this.getSetKey(task), request.getUrl()) == 0L;

@@ -35,13 +35,17 @@ public class MyProxyProvider implements ProxyProvider {
     @Override
     public Proxy getProxy(Task task) {
         if (!lastStatus) {
-            RestTemplate restTemplate = new RestTemplate();
-            String result = restTemplate.getForEntity(baseUrl + "/get", String.class).getBody();
-            JSONObject jsonObject = JSON.parseObject(result);
-            String[] proxy = jsonObject.getString("proxy").split(":");
-            lastProxy = new Proxy(proxy[0], Integer.parseInt(proxy[1]));
-            log.info("获得代理：" + lastProxy);
+            updateProxy();
         }
         return lastProxy;
+    }
+
+    public void updateProxy() {
+        RestTemplate restTemplate = new RestTemplate();
+        String result = restTemplate.getForEntity(baseUrl + "/get", String.class).getBody();
+        JSONObject jsonObject = JSON.parseObject(result);
+        String[] proxy = jsonObject.getString("proxy").split(":");
+        lastProxy = new Proxy(proxy[0], Integer.parseInt(proxy[1]));
+        log.info("获得代理：" + lastProxy);
     }
 }
