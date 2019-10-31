@@ -202,43 +202,45 @@
         <div class="panel-heading" style="text-align: center">查询结果</div>
 
         <!-- Table -->
-        <table class="table" id="resultTable">
-            <thead>
-            <th>职位名</th>
-            <th>公司名</th>
-            <th>工作地</th>
-            <th>发布时间</th>
-            </thead>
-            <tbody id="resultTbody">
+        <!--        <table class="table" id="resultTable">-->
+        <!--            <thead>-->
+        <!--            <th>职位名</th>-->
+        <!--            <th>公司名</th>-->
+        <!--            <th>工作地</th>-->
+        <!--            <th>发布时间</th>-->
+        <!--            </thead>-->
+        <!--            <tbody id="resultTbody">-->
 
-            </tbody>
-        </table>
+        <!--            </tbody>-->
+        <!--        </table>-->
+        <table id="table"></table>
+
     </div>
-    <!--导航栏-->
-    <nav aria-label="Page navigation" class="row" style="text-align: center">
-        <ul class="pagination">
-            <li>
-                <a aria-label="Previous" href="#">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-            <li><a href="#">1</a></li>
-            <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-            <li><a href="#">4</a></li>
-            <li><a href="#">5</a></li>
-            <li><a href="#">6</a></li>
-            <li><a href="#">7</a></li>
-            <li><a href="#">8</a></li>
-            <li><a href="#">9</a></li>
-            <li><a href="#">10</a></li>
-            <li>
-                <a aria-label="Next" href="#">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+    <!--    &lt;!&ndash;导航栏&ndash;&gt;-->
+    <!--    <nav aria-label="Page navigation" class="row" style="text-align: center">-->
+    <!--        <ul class="pagination">-->
+    <!--            <li>-->
+    <!--                <a aria-label="Previous" href="#">-->
+    <!--                    <span aria-hidden="true">&laquo;</span>-->
+    <!--                </a>-->
+    <!--            </li>-->
+    <!--            <li><a href="#">1</a></li>-->
+    <!--            <li><a href="#">2</a></li>-->
+    <!--            <li><a href="#">3</a></li>-->
+    <!--            <li><a href="#">4</a></li>-->
+    <!--            <li><a href="#">5</a></li>-->
+    <!--            <li><a href="#">6</a></li>-->
+    <!--            <li><a href="#">7</a></li>-->
+    <!--            <li><a href="#">8</a></li>-->
+    <!--            <li><a href="#">9</a></li>-->
+    <!--            <li><a href="#">10</a></li>-->
+    <!--            <li>-->
+    <!--                <a aria-label="Next" href="#">-->
+    <!--                    <span aria-hidden="true">&raquo;</span>-->
+    <!--                </a>-->
+    <!--            </li>-->
+    <!--        </ul>-->
+    <!--    </nav>-->
 <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
 <script src="webjars/jquery/3.4.1/jquery.min.js"></script>
 <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
@@ -256,38 +258,85 @@
     <script src="https://unpkg.com/bootstrap-table@1.15.3/dist/locale/bootstrap-table-zh-CN.min.js"></script>
 <script>
     function search() {
-        var keyword = $('#inputKeyWord').val();
-        var salary = $('#salaryRange > .active').attr("data");
-        if(salary==null){
-            salary="*-*";
-        }
-        var time = $('#timeRange > .active').attr("data");
-        var education = $('#educationRange > .active').attr("data");
-        var exp = $('#expRange > .active').attr("data");
-        var place = $('#selectorPlace').val();
-
-        console.log(salary);
-        $.ajax({
-            type:"POST",
-            url:"/search",
-            data:{
-                keyword:keyword,
-                salary:salary,
-                time:time,
-                education:education,
-                exp:exp,
-                place:place
-            },
-            dataType:"json",
-            success:function (data) {
-                alert(data);
-            }
-        });
-
+        // var keyword = $('#inputKeyWord').val();
+        // var salary = $('#salaryRange > .active').attr("data");
+        // if(salary==null){
+        //     salary="*-*";
+        // }
+        // var time = $('#timeRange > .active').attr("data");
+        // var education = $('#educationRange > .active').attr("data");
+        // var exp = $('#expRange > .active').attr("data");
+        // var place = $('#selectorPlace').val();
+        //
+        // console.log(salary);
+        // $.ajax({
+        //     type:"POST",
+        //     url:"/search",
+        //     data:{
+        //         keyword:keyword,
+        //         salary:salary,
+        //         time:time,
+        //         education:education,
+        //         exp:exp,
+        //         place:place
+        //     },
+        //     dataType:"json",
+        //     success:function (data) {
+        //         alert(data);
+        //     }
+        // });
+        $("#table").bootstrapTable('refresh', {pageNumber: 1});
 
     }
 </script>
+    <script>
+        $(document).ready(function () {
+            $('#table').bootstrapTable({
+                url: '/search',
+                method: 'post',
+                queryParamsType: '',
+                queryParams: getParams,
+                pagination: true,
+                pageNumber: 1,
+                pageSize: 30,
+                pageList: [10, 20, 50, 100],
+                sidePagination: 'server',
+                height: 300,
+                paginationPreText: '上一页',
+                paginationNextText: '下一页',
+                columns: [
+                    {title: "职位名", field: 'jobName'},
+                    {title: "公司名", field: 'companyName'},
+                    {title: "工作地点", field: 'jobAddr'},
+                    {title: "薪资", field: 'salary'},
+                    {title: "发布时间", field: 'time'}
+                ]
 
+
+            })
+        });
+
+        function getParams(params) {
+            var keyword = $('#inputKeyWord').val();
+            var salary = $('#salaryRange > .active').attr("data");
+            var time = $('#timeRange > .active').attr("data");
+            var education = $('#educationRange > .active').attr("data");
+            var exp = $('#expRange > .active').attr("data");
+            var place = $('#selectorPlace').val();
+            return {
+                pageNumber: params.pageNumber,
+                pageSize: params.pageSize,
+                sortName: params.sortName,
+                sortOrder: params.sortOrder,
+                keyword: keyword,
+                salary: salary,
+                time: time,
+                education: education,
+                exp: exp,
+                place: place
+            };
+        }
+    </script>
 <script>
 
 
