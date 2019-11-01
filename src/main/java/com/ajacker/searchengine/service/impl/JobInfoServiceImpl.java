@@ -46,7 +46,6 @@ public class JobInfoServiceImpl implements IJobInfoService {
 
     @Override
     public TableJobResult search(SearchParams params) {
-        //TODO:这里不合适 还得改 只是测试用
         int page = params.getPageNumber();
         int size = params.getPageSize();
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
@@ -74,6 +73,17 @@ public class JobInfoServiceImpl implements IJobInfoService {
             query = QueryBuilders.boolQuery().must(salaryRangeQuery).must(query);
 
         }
+        //工作经验
+        if (StringUtils.isNotBlank(params.getExp())) {
+            String[] part = params.getExp().split("-");
+            int min = Integer.parseInt(part[0]);
+            int max = Integer.parseInt(part[1]);
+            BoolQueryBuilder expRangeQuery = QueryBuilders.boolQuery()
+                    .must(QueryBuilders.rangeQuery("expMin").gt(min).includeLower(true))
+                    .must(QueryBuilders.rangeQuery("expMax").lt(max).includeUpper(true));
+            query = QueryBuilders.boolQuery().must(expRangeQuery).must(query);
+
+        }
         //发布时间条件
         if (params.getTime() != 0) {
             Date to = new Date();
@@ -87,6 +97,7 @@ public class JobInfoServiceImpl implements IJobInfoService {
                     .lt(to);
             query = QueryBuilders.boolQuery().must(timeRangeQuery).must(query);
         }
+        //TODO:学历要求
         //构建查询语句
         queryBuilder.withQuery(query);
         jobInfoDao.search(queryBuilder.build());
