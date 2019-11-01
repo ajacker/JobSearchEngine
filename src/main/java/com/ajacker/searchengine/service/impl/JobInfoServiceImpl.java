@@ -6,10 +6,15 @@ import com.ajacker.searchengine.pojo.JobResult;
 import com.ajacker.searchengine.pojo.SearchParams;
 import com.ajacker.searchengine.pojo.TableJobResult;
 import com.ajacker.searchengine.service.IJobInfoService;
+import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
@@ -40,12 +45,39 @@ public class JobInfoServiceImpl implements IJobInfoService {
     @Override
     public TableJobResult search(SearchParams params) {
         //TODO:这里不合适 还得改 只是测试用
-        String keyword = params.getKeyword();
         int page = params.getPageNumber();
         int size = params.getPageSize();
+        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
+        QueryBuilder query = QueryBuilders.matchAllQuery();
+        //关键字搜索条件
+        if (StringUtils.isNotBlank(params.getKeyword())) {
+            BoolQueryBuilder keywordQuery = QueryBuilders.boolQuery()
+                    .should(QueryBuilders.matchQuery("jobName", params.getKeyword()))
+                    .should(QueryBuilders.matchQuery("jobInfo", params.getKeyword()))
+                    .should(QueryBuilders.matchQuery("jobAddr", params.getKeyword()))
+                    .should(QueryBuilders.matchQuery("companyName", params.getKeyword()))
+                    .should(QueryBuilders.matchQuery("companyInfo", params.getKeyword()))
+                    .should(QueryBuilders.matchQuery("companyAddr", params.getKeyword()));
 
-        Page<JobInfo> pages = jobInfoDao.findByJobNameLikeOrJobInfoLikeOrJobAddrLike(keyword,
-                keyword, keyword, PageRequest.of(page - 1, size));
+            query = QueryBuilders.boolQuery().must(keywordQuery).must(query);
+        }
+        //薪资范围条件
+        if (StringUtils.isNotBlank(params.getSalary())) {
+            String[] part = params.getSalary().split("-");
+            int min = (int) (Float.parseFloat(part[0]) * 1000);
+            int max = (int) (Float.parseFloat(part[1]) * 1000);
+            BoolQueryBuilder salaryRangeQuery = QueryBuilders.boolQuery()
+                    .must(QueryBuilders.rangeQuery("salaryMin").gte(min).includeLower(true))
+                    .must(QueryBuilders.rangeQuery("salaryMax").lte(max).includeUpper(true));
+            query = QueryBuilders.boolQuery().must(salaryRangeQuery).must(query);
+
+        }
+        //构建查询语句
+        queryBuilder.withQuery(query);
+        jobInfoDao.search(queryBuilder.build());
+        //设置分页
+        queryBuilder.withPageable(PageRequest.of(page - 1, size));
+        Page<JobInfo> pages = jobInfoDao.search(queryBuilder.build());
         TableJobResult tableJobResult = new TableJobResult();
         //设置总结果数量
         tableJobResult.setTotal(pages.getTotalElements());
