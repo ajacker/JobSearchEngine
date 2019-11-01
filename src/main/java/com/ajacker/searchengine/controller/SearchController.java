@@ -1,6 +1,7 @@
 package com.ajacker.searchengine.controller;
 
 import com.ajacker.searchengine.pojo.SearchParams;
+import com.ajacker.searchengine.pojo.TableJobResult;
 import com.ajacker.searchengine.service.impl.JobInfoServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,8 +18,8 @@ public class SearchController {
     private JobInfoServiceImpl jobInfoService;
 
     @RequestMapping("/search")
-    public void search(@RequestBody SearchParams params) {
+    public TableJobResult search(@RequestBody SearchParams params) {
         System.out.println(params);
-
+        return jobInfoService.search(params);
     }
 }

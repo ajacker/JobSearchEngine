@@ -14,8 +14,6 @@ import org.springframework.stereotype.Repository;
 public interface IJobInfoDao extends ElasticsearchRepository<JobInfo, String> {
 
 
-    Page<JobInfo> findBySalaryMinGreaterThanAndSalaryMaxLessThanAndExpMinGreaterThanAndExpMaxLessThanAndJobInfoLikeAndJobNameLikeAndJobAddrLike(int salaryMin, int salaryMax, int expMin, int expMax, String keyword, String keyword1, String place, Pageable of);
-
     Page<JobInfo> findByJobNameLikeOrJobInfoLikeOrJobAddrLike(String keyword1, String keyword2, String keyword3, Pageable page);
 
 }

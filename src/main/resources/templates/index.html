@@ -299,17 +299,25 @@
                 pagination: true,
                 pageNumber: 1,
                 pageSize: 30,
-                pageList: [10, 20, 50, 100],
+                pageList: [15, 30, 50, 100],
                 sidePagination: 'server',
-                height: 300,
                 paginationPreText: '上一页',
                 paginationNextText: '下一页',
                 columns: [
-                    {title: "职位名", field: 'jobName'},
+                    {
+                        title: "职位名",
+                        field: 'jobName',
+                        formatter: function (value, row, index) {
+                            var actions = [];
+                            actions.push('<a href=' + row.url + '>' + value + '</a> ');
+                            return actions.join('');
+                        }
+                    },
                     {title: "公司名", field: 'companyName'},
                     {title: "工作地点", field: 'jobAddr'},
                     {title: "薪资", field: 'salary'},
-                    {title: "发布时间", field: 'time'}
+                    {title: "发布时间", field: 'time'},
+                    {title: "链接", field: 'url', visible: false}
                 ]
 
 

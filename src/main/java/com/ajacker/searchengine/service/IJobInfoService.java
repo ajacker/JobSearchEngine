@@ -1,6 +1,8 @@
 package com.ajacker.searchengine.service;
 
 import com.ajacker.searchengine.pojo.JobInfo;
+import com.ajacker.searchengine.pojo.SearchParams;
+import com.ajacker.searchengine.pojo.TableJobResult;
 
 import java.util.List;
 
@@ -23,5 +25,5 @@ public interface IJobInfoService {
      */
     void saveAll(List<JobInfo> jobInfo);
 
-    void search(String keyword, String salary, String time, String education, String exp, String place);
+    TableJobResult search(SearchParams params);
 }

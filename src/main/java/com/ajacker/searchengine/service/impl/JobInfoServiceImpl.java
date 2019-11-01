@@ -2,13 +2,21 @@ package com.ajacker.searchengine.service.impl;
 
 import com.ajacker.searchengine.dao.IJobInfoDao;
 import com.ajacker.searchengine.pojo.JobInfo;
+import com.ajacker.searchengine.pojo.JobResult;
+import com.ajacker.searchengine.pojo.SearchParams;
+import com.ajacker.searchengine.pojo.TableJobResult;
 import com.ajacker.searchengine.service.IJobInfoService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author ajacker
@@ -30,22 +38,29 @@ public class JobInfoServiceImpl implements IJobInfoService {
     }
 
     @Override
-    public void search(String keyword, String salary, String time, String education, String exp, String place) {
+    public TableJobResult search(SearchParams params) {
         //TODO:这里不合适 还得改 只是测试用
-        String[] salaryParts = salary.split("-");
-        int salaryMin = (int) (Float.parseFloat(salaryParts[0]) * 1000);
-        int salaryMax = (int) (Float.parseFloat(salaryParts[1]) * 1000);
-        String[] expParts = exp.split("-");
-        int expMin = Integer.parseInt(expParts[0]);
-        int expMax = Integer.parseInt(expParts[1]);
+        String keyword = params.getKeyword();
+        int page = params.getPageNumber();
+        int size = params.getPageSize();
 
-        salaryMin = 0;
-        salaryMax = 10000000;
-
-        int page = 1;
         Page<JobInfo> pages = jobInfoDao.findByJobNameLikeOrJobInfoLikeOrJobAddrLike(keyword,
-                keyword, keyword, PageRequest.of(page - 1, 30));
-        System.out.println(pages.getTotalElements());
+                keyword, keyword, PageRequest.of(page - 1, size));
+        TableJobResult tableJobResult = new TableJobResult();
+        //设置总结果数量
+        tableJobResult.setTotal(pages.getTotalElements());
+        //封装结果
+        List<JobResult> rows = pages.getContent().stream().map(jobInfo -> {
+            JobResult jobResult = new JobResult();
+            BeanUtils.copyProperties(jobInfo, jobResult);
+            jobResult.setSalary(String.format("%dk-%dk", jobInfo.getSalaryMin() / 1000, jobInfo.getSalaryMax() / 1000));
+            DateFormat dateFormat = new SimpleDateFormat("MM-dd");
+            Date date = jobInfo.getTime();
+            jobResult.setTime(dateFormat.format(date));
+            return jobResult;
+        }).collect(Collectors.toList());
+        tableJobResult.setRows(rows);
+        return tableJobResult;
 
 
     }
