@@ -6,11 +6,9 @@ import com.ajacker.searchengine.pojo.JobResult;
 import com.ajacker.searchengine.pojo.SearchParams;
 import com.ajacker.searchengine.pojo.TableJobResult;
 import com.ajacker.searchengine.service.IJobInfoService;
+import com.ajacker.searchengine.util.AreaUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.RangeQueryBuilder;
+import org.elasticsearch.index.query.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -96,6 +94,12 @@ public class JobInfoServiceImpl implements IJobInfoService {
                     .gt(from)
                     .lt(to);
             query = QueryBuilders.boolQuery().must(timeRangeQuery).must(query);
+        }
+        //地区搜索
+        if (!params.getPlace().equals("全国")) {
+            TermsQueryBuilder jobAddrQuery = QueryBuilders.termsQuery("jobAddr",
+                    AreaUtil.province.get(params.getPlace()));
+            query = QueryBuilders.boolQuery().must(jobAddrQuery).must(query);
         }
         //TODO:学历要求
         //构建查询语句
