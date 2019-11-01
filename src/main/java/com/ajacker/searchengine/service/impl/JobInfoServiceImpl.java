@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,12 +54,12 @@ public class JobInfoServiceImpl implements IJobInfoService {
         //关键字搜索条件
         if (StringUtils.isNotBlank(params.getKeyword())) {
             BoolQueryBuilder keywordQuery = QueryBuilders.boolQuery()
-                    .should(QueryBuilders.matchQuery("jobName", params.getKeyword()))
-                    .should(QueryBuilders.matchQuery("jobInfo", params.getKeyword()))
-                    .should(QueryBuilders.matchQuery("jobAddr", params.getKeyword()))
-                    .should(QueryBuilders.matchQuery("companyName", params.getKeyword()))
-                    .should(QueryBuilders.matchQuery("companyInfo", params.getKeyword()))
-                    .should(QueryBuilders.matchQuery("companyAddr", params.getKeyword()));
+                    .should(QueryBuilders.termQuery("jobName", params.getKeyword()))
+                    .should(QueryBuilders.termQuery("jobInfo", params.getKeyword()))
+                    .should(QueryBuilders.termQuery("jobAddr", params.getKeyword()))
+                    .should(QueryBuilders.termQuery("companyName", params.getKeyword()))
+                    .should(QueryBuilders.termQuery("companyInfo", params.getKeyword()))
+                    .should(QueryBuilders.termQuery("companyAddr", params.getKeyword()));
 
             query = QueryBuilders.boolQuery().must(keywordQuery).must(query);
         }
@@ -67,10 +69,23 @@ public class JobInfoServiceImpl implements IJobInfoService {
             int min = (int) (Float.parseFloat(part[0]) * 1000);
             int max = (int) (Float.parseFloat(part[1]) * 1000);
             BoolQueryBuilder salaryRangeQuery = QueryBuilders.boolQuery()
-                    .must(QueryBuilders.rangeQuery("salaryMin").gte(min).includeLower(true))
-                    .must(QueryBuilders.rangeQuery("salaryMax").lte(max).includeUpper(true));
+                    .must(QueryBuilders.rangeQuery("salaryMin").gt(min).includeLower(true))
+                    .must(QueryBuilders.rangeQuery("salaryMax").lt(max).includeUpper(true));
             query = QueryBuilders.boolQuery().must(salaryRangeQuery).must(query);
 
+        }
+        //发布时间条件
+        if (params.getTime() != 0) {
+            Date to = new Date();
+            Calendar rightNow = Calendar.getInstance();
+            rightNow.setTime(to);
+            rightNow.add(Calendar.DAY_OF_YEAR, params.getTime() * -1);
+            Date from = rightNow.getTime();
+            RangeQueryBuilder timeRangeQuery = QueryBuilders.rangeQuery("time")
+                    .format("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").timeZone("+08")
+                    .gt(from)
+                    .lt(to);
+            query = QueryBuilders.boolQuery().must(timeRangeQuery).must(query);
         }
         //构建查询语句
         queryBuilder.withQuery(query);
