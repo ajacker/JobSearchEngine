@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -86,13 +87,21 @@ public class JobInfoServiceImpl implements IJobInfoService {
         if (params.getTime() != 0) {
             Date to = new Date();
             Calendar rightNow = Calendar.getInstance();
+            LocalDate date = LocalDate.now();
             rightNow.setTime(to);
             rightNow.add(Calendar.DAY_OF_YEAR, params.getTime() * -1);
+            rightNow.set(Calendar.HOUR_OF_DAY, 0);
+            rightNow.set(Calendar.MINUTE, 0);
+            rightNow.set(Calendar.SECOND, 0);
             Date from = rightNow.getTime();
+            System.out.println(from);
+            System.out.println(to);
             RangeQueryBuilder timeRangeQuery = QueryBuilders.rangeQuery("time")
-                    .format("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").timeZone("+08")
+                    .format("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
                     .gt(from)
-                    .lt(to);
+                    .lt(to)
+                    .includeLower(true)
+                    .includeUpper(true);
             query = QueryBuilders.boolQuery().must(timeRangeQuery).must(query);
         }
         //地区搜索
