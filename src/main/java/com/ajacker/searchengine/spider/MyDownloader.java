@@ -1,7 +1,4 @@
-package com.ajacker.searchengine.spider;//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
+package com.ajacker.searchengine.spider;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -86,11 +83,11 @@ public class MyDownloader extends AbstractDownloader {
                 httpResponse = httpClient.execute(requestContext.getHttpUriRequest(), requestContext.getHttpClientContext());
                 page = this.handleResponse(request, request.getCharset() != null ? request.getCharset() : task.getSite().getCharset(), httpResponse, task);
                 this.onSuccess(request);
-                log.info("downloading page success {}", request.getUrl());
+                log.info("以下页面下载成功: {}", request.getUrl());
                 return page;
             } catch (Exception e) {
                 page.setDownloadSuccess(false);
-                log.warn("download page {} error", request.getUrl(), e);
+                log.warn("页面: {} 下载失败，放入重试队列", request.getUrl());
                 this.onError(request);
                 res = page;
             } finally {

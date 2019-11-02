@@ -94,8 +94,6 @@ public class JobInfoServiceImpl implements IJobInfoService {
             rightNow.set(Calendar.MINUTE, 0);
             rightNow.set(Calendar.SECOND, 0);
             Date from = rightNow.getTime();
-            System.out.println(from);
-            System.out.println(to);
             RangeQueryBuilder timeRangeQuery = QueryBuilders.rangeQuery("time")
                     .format("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
                     .gt(from)
