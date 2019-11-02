@@ -1,6 +1,7 @@
 package com.ajacker.searchengine.spider;
 
 import com.ajacker.searchengine.pojo.JobInfo;
+import com.ajacker.searchengine.util.EducationUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,7 +47,7 @@ public class JobProcessor implements PageProcessor {
             .setRetrySleepTime(1000)
             .setSleepTime(200);
 
-    @Scheduled(initialDelay = 1000, fixedDelay = 10000 * 1000)
+    @Scheduled(initialDelay = 1000, fixedDelay = 1000000 * 1000)
     public void process() {
         log.info("定时爬虫执行...当前UUID:" + UUID);
 
@@ -170,6 +171,9 @@ public class JobProcessor implements PageProcessor {
         }
         jobInfo.setExpMin(expMin);
         jobInfo.setExpMax(expMax);
+        //学历
+        String edu = infos[2].replaceAll("\u00a0", "").replaceAll(" ", "");
+        jobInfo.setEducation(EducationUtil.educationMap.getOrDefault(edu, 0));
         //保存数据
         page.putField("jobInfo", jobInfo);
     }

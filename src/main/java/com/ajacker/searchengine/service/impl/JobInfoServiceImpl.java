@@ -108,6 +108,11 @@ public class JobInfoServiceImpl implements IJobInfoService {
                     AreaUtil.province.get(params.getPlace()));
             query = QueryBuilders.boolQuery().must(jobAddrQuery).must(query);
         }
+        //学历要求
+        if (params.getEducation() > 0) {
+            TermQueryBuilder educationQuery = QueryBuilders.termQuery("education", params.getEducation());
+            query = QueryBuilders.boolQuery().must(educationQuery).must(query);
+        }
         //TODO:学历要求
         //构建查询语句
         queryBuilder.withQuery(query);
