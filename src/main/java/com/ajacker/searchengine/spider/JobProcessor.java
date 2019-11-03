@@ -44,7 +44,7 @@ public class JobProcessor implements PageProcessor {
     private Site site = Site.me()
             .setCharset("gbk")
             .setCycleRetryTimes(30)
-            .setRetrySleepTime(1000)
+            .setRetrySleepTime(500)
             .setSleepTime(200);
 
     @Scheduled(initialDelay = 1000, fixedDelay = 1000000 * 1000)

@@ -98,7 +98,7 @@ public class JobInfoServiceImpl implements IJobInfoService {
                     .format("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
                     .gt(from)
                     .lt(to)
-                    .includeLower(true)
+                    .includeLower(false)
                     .includeUpper(true);
             query = QueryBuilders.boolQuery().must(timeRangeQuery).must(query);
         }
