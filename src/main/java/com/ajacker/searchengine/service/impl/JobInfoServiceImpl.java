@@ -111,7 +111,6 @@ public class JobInfoServiceImpl implements IJobInfoService {
             TermQueryBuilder educationQuery = QueryBuilders.termQuery("education", params.getEducation());
             query = QueryBuilders.boolQuery().must(educationQuery).must(query);
         }
-        //TODO:学历要求
         //构建查询语句
         queryBuilder.withQuery(query);
         jobInfoDao.search(queryBuilder.build());

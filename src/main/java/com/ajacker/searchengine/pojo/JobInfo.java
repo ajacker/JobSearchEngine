@@ -33,7 +33,7 @@ public class JobInfo {
     @Field(store = true, analyzer = "ik_smart", searchAnalyzer = "ik_smart", type = FieldType.Text)
     private String jobInfo;
     @Field(store = true, type = FieldType.Integer)
-    private int education;
+    private Integer education;
     @Field(store = true, type = FieldType.Integer)
     private Integer salaryMin;
     @Field(store = true, type = FieldType.Integer)

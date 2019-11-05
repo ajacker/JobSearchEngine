@@ -23,7 +23,9 @@ public class EducationUtil {
         educations.add("硕士");
         educations.add("博士");
         educationMap.put("初中及以下", 1);
-        educationMap.put("高中/中技/中专", 2);
+        educationMap.put("高中", 2);
+        educationMap.put("中技", 2);
+        educationMap.put("中专", 2);
         educationMap.put("大专", 3);
         educationMap.put("本科", 4);
         educationMap.put("硕士", 5);
