@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Task;
@@ -47,7 +48,13 @@ public class MyProxyProvider implements ProxyProvider {
 
     public void updateProxy() {
         RestTemplate restTemplate = new RestTemplate();
-        String result = restTemplate.getForEntity(baseUrl + "/get", String.class).getBody();
+        String result = null;
+        try {
+            result = restTemplate.getForEntity(baseUrl + "/get", String.class).getBody();
+        } catch (ResourceAccessException e) {
+            log.error("请检查是否启动了代理池服务器或是否正确配置地址！", e);
+            System.exit(-1);
+        }
         JSONObject jsonObject = JSON.parseObject(result);
         if (StringUtils.isEmpty(jsonObject.getString("proxy"))) {
             return;

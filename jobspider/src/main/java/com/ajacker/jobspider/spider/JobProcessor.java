@@ -78,6 +78,7 @@ public class JobProcessor implements PageProcessor {
         }
         spider.start();
 
+
     }
 
     @Override
@@ -105,6 +106,7 @@ public class JobProcessor implements PageProcessor {
                 this.saveJobInfo(page);
             } catch (Exception e) {
                 //e.printStackTrace();
+                page.setDownloadSuccess(false);
                 log.error("当前页面爬取出错：" + page.getUrl());
             }
         }

@@ -19,4 +19,10 @@ public class MySpiderMXBean extends SpiderStatus implements MyStatusMXBean {
     public String getSchedulerName() {
         return spider.getScheduler().getClass().getName();
     }
+
+    @Override
+    public int getTotalPageCount() {
+        return super.getTotalPageCount();
+    }
+    
 }
