@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "spider.UUID",
+      "type": "java.lang.String",
+      "description": "配置爬虫的UUID（相同UUID共享一个队列）."
+    },
+    {
+      "name": "spider.startUrl",
+      "type": "java.lang.String",
+      "description": "配置爬虫的起始爬取URL."
+    }
+  ]
+}

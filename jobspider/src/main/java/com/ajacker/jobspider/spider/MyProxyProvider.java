@@ -3,6 +3,9 @@ package com.ajacker.jobspider.spider;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -17,8 +20,10 @@ import us.codecraft.webmagic.proxy.ProxyProvider;
  */
 @Component
 @Slf4j
+@PropertySource("classpath:spider.properties")
 public class MyProxyProvider implements ProxyProvider {
-    private static String baseUrl = "http://127.0.0.1:5010";
+    @Value("${spider.proxy.url}")
+    private String baseUrl;
     private static boolean lastStatus;
     private static Proxy lastProxy;
 
@@ -44,6 +49,9 @@ public class MyProxyProvider implements ProxyProvider {
         RestTemplate restTemplate = new RestTemplate();
         String result = restTemplate.getForEntity(baseUrl + "/get", String.class).getBody();
         JSONObject jsonObject = JSON.parseObject(result);
+        if (StringUtils.isEmpty(jsonObject.getString("proxy"))) {
+            return;
+        }
         String[] proxy = jsonObject.getString("proxy").split(":");
         lastProxy = new Proxy(proxy[0], Integer.parseInt(proxy[1]));
         log.info("获得代理：" + lastProxy);

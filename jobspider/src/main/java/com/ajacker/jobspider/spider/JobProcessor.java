@@ -1,19 +1,23 @@
 package com.ajacker.jobspider.spider;
 
 import com.ajacker.jobspider.pojo.JobInfo;
+import com.ajacker.jobspider.spider.monitor.MySpiderMXBean;
 import com.ajacker.jobspider.util.EducationUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
+import us.codecraft.webmagic.monitor.SpiderMonitor;
+import us.codecraft.webmagic.monitor.SpiderStatusMXBean;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.selector.Html;
 import us.codecraft.webmagic.selector.Selectable;
 
+import javax.management.JMException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,6 +32,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
+@PropertySource("classpath:spider.properties")
 public class JobProcessor implements PageProcessor {
     @Autowired
     private ElasticSearchPipeLine elasticSearchPipeLine;
@@ -39,26 +44,39 @@ public class JobProcessor implements PageProcessor {
     private String UUID;
     @Value("${spider.startUrl}")
     private String url;
+    @Value("${spider.threadNum}")
+    private int threadNum;
+    @Value("${spider.sleepTime}")
+    private int sleepTime;
 
 
     private Site site = Site.me()
             .setCharset("gbk")
             .setCycleRetryTimes(30)
             .setRetrySleepTime(500)
-            .setSleepTime(200);
+            .setSleepTime(sleepTime);
 
-    @Scheduled(initialDelay = 1000, fixedDelay = 1000000 * 1000)
     public void process() {
-        log.info("定时爬虫执行...当前UUID:" + UUID);
-
-        Spider.create(new JobProcessor())
+        log.info("爬虫执行...当前UUID:" + UUID);
+        Spider spider = Spider.create(new JobProcessor())
                 .setUUID(UUID)
                 .addUrl(url)
                 .setScheduler(scheduler)
                 .addPipeline(elasticSearchPipeLine)
                 .setDownloader(downloader)
-                .thread(5)
-                .runAsync();
+                .thread(threadNum);
+        try {
+            SpiderMonitor spiderMonitor = new SpiderMonitor() {
+                @Override
+                protected SpiderStatusMXBean getSpiderStatusMBean(Spider spider, MonitorSpiderListener monitorSpiderListener) {
+                    return new MySpiderMXBean(spider, monitorSpiderListener);
+                }
+            };
+            spiderMonitor.register(spider);
+        } catch (JMException e) {
+            log.error("爬虫监视器创建失败", e);
+        }
+        spider.start();
     }
 
     @Override

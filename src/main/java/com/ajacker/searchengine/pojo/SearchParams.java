@@ -29,7 +29,7 @@ public class SearchParams {
      */
     private int time;
     /**
-     * TODO:学历最小要求
+     * 学历最小要求
      */
     private int education;
     /**
