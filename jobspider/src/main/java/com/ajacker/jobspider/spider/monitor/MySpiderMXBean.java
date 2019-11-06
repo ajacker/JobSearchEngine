@@ -24,5 +24,6 @@ public class MySpiderMXBean extends SpiderStatus implements MyStatusMXBean {
     public int getTotalPageCount() {
         return super.getTotalPageCount();
     }
-    
+
+
 }

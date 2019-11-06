@@ -34,8 +34,17 @@
     </table>
     <div class="row" style="display: flex">
         <div aria-label="..." class="btn-group btn-group-lg center-block" role="group">
-            <button class="btn btn-primary" type="button">启动</button>
-            <button class="btn btn-danger" type="button">停止</button>
+            <button class="btn btn-primary" id="start-btn" onclick="start()" type="button">启动</button>
+            <button class="btn btn-danger" id="stop-btn" onclick="stop()" type="button">停止</button>
+        </div>
+    </div>
+
+    <div class="panel panel-primary row" style="margin-top: 20px">
+        <div class="panel-heading">
+            <h3 class="panel-title">信息：</h3>
+        </div>
+        <div class="panel-body">
+            <div id="message"></div>
         </div>
     </div>
 </div>
@@ -56,4 +65,41 @@
 <script src="js/bootstrap-table.min.js"></script>
 <!-- Latest compiled and minified Locales -->
 <script src="js/i18n/bootstrap-table-zh-CN.min.js"></script>
+<script>
+    function start() {
+        $.ajax({
+            type: "POST",
+            url: "/spider/start",
+            success: onReturn
+        });
+    }
+
+    function stop() {
+        $.ajax({
+            type: "POST",
+            url: "/spider/stop",
+            success: onReturn
+        });
+    }
+
+    function onReturn(data) {
+        var status = data.status;
+        var message = data.message;
+        var type;
+        switch (status) {
+            case "-1":
+                type = "alert alert-danger alert-dismissible";
+                break;
+            case "0":
+                type = "alert alert-warning alert-dismissible";
+                break;
+            case "1":
+                type = "alert alert-success alert-dismissible";
+                break;
+        }
+        $("#message").prepend('<div class="' + type + '" role="alert">' +
+            '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+            + message + '</div>')
+    }
+</script>
 </html>
