@@ -77,10 +77,12 @@ public class JobProcessor implements PageProcessor {
             log.error("爬虫监视器创建失败", e);
         }
         spider.start();
+
     }
 
     @Override
     public void process(Page page) {
+
         //解析页面，获取招聘信息的url地址
         List<Selectable> list = page.getHtml().css("div#resultList > div.el:not(.title)").nodes();
 
@@ -183,7 +185,7 @@ public class JobProcessor implements PageProcessor {
                     expMin = Integer.parseInt(exp);
                     expMax = Integer.parseInt(exp);
                 } catch (NumberFormatException e) {
-                    expMin = 10;
+                    expMin = 0;
                     expMax = 100;
                 }
             }
