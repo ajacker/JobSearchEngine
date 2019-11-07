@@ -1,5 +1,6 @@
 package com.ajacker.jobspider.spider.monitor;
 
+import com.ajacker.jobspider.util.InfoUtil;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.monitor.SpiderMonitor;
 import us.codecraft.webmagic.monitor.SpiderStatus;
@@ -10,20 +11,37 @@ import us.codecraft.webmagic.monitor.SpiderStatus;
  */
 
 public class MySpiderMXBean extends SpiderStatus implements MyStatusMXBean {
+    private InfoUtil infoUtil;
 
-    public MySpiderMXBean(Spider spider, SpiderMonitor.MonitorSpiderListener monitorSpiderListener) {
+    public MySpiderMXBean(Spider spider, SpiderMonitor.MonitorSpiderListener monitorSpiderListener, InfoUtil infoUtil) {
         super(spider, monitorSpiderListener);
+        this.infoUtil = infoUtil;
     }
 
-    @Override
-    public String getSchedulerName() {
-        return spider.getScheduler().getClass().getName();
-    }
 
     @Override
     public int getTotalPageCount() {
-        return super.getTotalPageCount();
+        return this.getDownloadSuccessPageCount() + this.getDownloadErrorPageCount();
     }
 
 
+    @Override
+    public int getAnalyseErrorPageCount() {
+        return infoUtil.getAnalyseError().intValue();
+    }
+
+    @Override
+    public int getAnalyseSuccessPageCount() {
+        return infoUtil.getAnalyseSuccess().intValue();
+    }
+
+    @Override
+    public int getDownloadErrorPageCount() {
+        return super.getErrorPageCount();
+    }
+
+    @Override
+    public int getDownloadSuccessPageCount() {
+        return super.getSuccessPageCount();
+    }
 }

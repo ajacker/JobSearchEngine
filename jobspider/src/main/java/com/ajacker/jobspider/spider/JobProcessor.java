@@ -1,23 +1,16 @@
 package com.ajacker.jobspider.spider;
 
 import com.ajacker.jobspider.pojo.JobInfo;
-import com.ajacker.jobspider.spider.monitor.MySpiderMXBean;
 import com.ajacker.jobspider.util.EducationUtil;
+import com.ajacker.jobspider.util.InfoUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
-import us.codecraft.webmagic.Spider;
-import us.codecraft.webmagic.monitor.SpiderMonitor;
-import us.codecraft.webmagic.monitor.SpiderStatusMXBean;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.selector.Html;
 import us.codecraft.webmagic.selector.Selectable;
 
-import javax.management.JMException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,54 +25,21 @@ import java.util.List;
  */
 @Slf4j
 @Component
-@PropertySource("classpath:spider.properties")
 public class JobProcessor implements PageProcessor {
-    @Autowired
-    private ElasticSearchPipeLine elasticSearchPipeLine;
-    @Autowired
-    private MyRedisScheduler scheduler;
-    @Autowired
-    private MyDownloader downloader;
-    @Value("${spider.UUID}")
-    private String UUID;
-    @Value("${spider.startUrl}")
-    private String url;
-    @Value("${spider.threadNum}")
-    private int threadNum;
-    @Value("${spider.sleepTime}")
-    private int sleepTime;
 
+    private final InfoUtil infoUtil;
+    private final Site site;
 
-    private Site site = Site.me()
-            .setCharset("gbk")
-            .setCycleRetryTimes(30)
-            .setRetrySleepTime(500)
-            .setSleepTime(sleepTime);
-
-    public void process() {
-        log.info("爬虫执行...当前UUID:" + UUID);
-        Spider spider = Spider.create(new JobProcessor())
-                .setUUID(UUID)
-                .addUrl(url)
-                .setScheduler(scheduler)
-                .addPipeline(elasticSearchPipeLine)
-                .setDownloader(downloader)
-                .thread(threadNum);
-        try {
-            SpiderMonitor spiderMonitor = new SpiderMonitor() {
-                @Override
-                protected SpiderStatusMXBean getSpiderStatusMBean(Spider spider, MonitorSpiderListener monitorSpiderListener) {
-                    return new MySpiderMXBean(spider, monitorSpiderListener);
-                }
-            };
-            spiderMonitor.register(spider);
-        } catch (JMException e) {
-            log.error("爬虫监视器创建失败", e);
-        }
-        spider.start();
-
-
+    public JobProcessor(InfoUtil infoUtil, Site site) {
+        this.infoUtil = infoUtil;
+        this.site = site;
     }
+
+    @Override
+    public Site getSite() {
+        return site;
+    }
+
 
     @Override
     public void process(Page page) {
@@ -103,10 +63,10 @@ public class JobProcessor implements PageProcessor {
         } else {
             //如果是详情页，爬取数据
             try {
+                infoUtil.analyseSuccess();
                 this.saveJobInfo(page);
             } catch (Exception e) {
-                //e.printStackTrace();
-                page.setDownloadSuccess(false);
+                infoUtil.analyseError();
                 log.error("当前页面爬取出错：" + page.getUrl());
             }
         }
@@ -201,8 +161,5 @@ public class JobProcessor implements PageProcessor {
         page.putField("jobInfo", jobInfo);
     }
 
-    @Override
-    public Site getSite() {
-        return site;
-    }
+
 }
