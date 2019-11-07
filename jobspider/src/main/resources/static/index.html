@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>爬虫管理控制台</title>
     <!-- Bootstrap -->
     <link href="webjars/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
     <!-- Latest compiled and minified CSS -->
@@ -12,9 +12,14 @@
     <link href="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.css" rel="stylesheet">
 </head>
 <body>
-<div class="page-header container">
-    <h1 class="row">爬虫管理系统 <small>信息监控+状态管理</small></h1>
-    <table class="table table-condensed">
+<div class="container">
+    <div class="page-header row">
+        <h1>爬虫管理系统<small>信息监控+状态管理</small></h1>
+        <h3>当前状态：
+            <span aria-hidden="true" class="glyphicon glyphicon-asterisk" id="status-span" style="color: green"></span>
+        </h3>
+    </div>
+    <table class="table table-condensed row">
         <thead>
         <tr>
             <th>队列剩余数量</th>
@@ -25,17 +30,39 @@
         </thead>
         <tbody>
         <tr>
-            <td>xxxx</td>
-            <td>xxxx</td>
-            <td>xxxx</td>
-            <td>xxxx</td>
+            <td id="leftCount">获取中...</td>
+            <td id="downloadSuccess">获取中...</td>
+            <td id="downloadError">获取中...</td>
+            <td id="downloadSuccessRate">获取中...</td>
+        </tr>
+        </tbody>
+        <thead>
+        <tr>
+            <th>总页数</th>
+            <th>分析成功数量</th>
+            <th>分析失败数量</th>
+            <th>分析成功率</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td id="totalPage">获取中...</td>
+            <td id="analyseSuccess">获取中...</td>
+            <td id="analyseError">获取中...</td>
+            <td id="analyseSuccessRate">获取中...</td>
         </tr>
         </tbody>
     </table>
     <div class="row" style="display: flex">
         <div aria-label="..." class="btn-group btn-group-lg center-block" role="group">
-            <button class="btn btn-primary" id="start-btn" onclick="start()" type="button">启动</button>
-            <button class="btn btn-danger" id="stop-btn" onclick="stop()" type="button">停止</button>
+            <button class="btn btn-success" id="start-btn" onclick="start()" type="button">
+                <span aria-hidden="true" class="glyphicon glyphicon-play"></span>
+                启动
+            </button>
+            <button class="btn btn-danger" id="stop-btn" onclick="stop()" type="button">
+                <span aria-hidden="true" class="glyphicon glyphicon-stop"></span>
+                停止
+            </button>
         </div>
     </div>
 
@@ -66,10 +93,41 @@
 <!-- Latest compiled and minified Locales -->
 <script src="js/i18n/bootstrap-table-zh-CN.min.js"></script>
 <script>
+    $(function () {
+        window.setInterval(function () {
+            $.ajax({
+                type: "POST",
+                url: "/info",
+                success: function (data) {
+                    $('#downloadSuccess').html(data.downloadSuccess);
+                    $('#downloadError').html(data.downloadError);
+                    $('#leftCount').html(data.leftPage);
+                    $('#downloadSuccessRate').html(data.downloadSuccessRate);
+                    $('#totalPage').html(data.totalPage);
+                    $('#analyseError').html(data.analyseError);
+                    $('#analyseSuccess').html(data.analyseSuccess);
+                    $('#analyseSuccessRate').html(data.analyseSuccessRate);
+                    var info = $('#status-span');
+                    switch (data.status) {
+                        case 'Running':
+                            info.css('color', 'green');
+                            info.text('\t运行中');
+                            break;
+                        case 'Stopped':
+                            info.css('color', 'red');
+                            info.text('\t已停止');
+                            break;
+                    }
+
+                }
+            });
+        }, 1000);
+    });
+
     function start() {
         $.ajax({
             type: "POST",
-            url: "/spider/start",
+            url: "/start",
             success: onReturn
         });
     }
@@ -77,7 +135,7 @@
     function stop() {
         $.ajax({
             type: "POST",
-            url: "/spider/stop",
+            url: "/stop",
             success: onReturn
         });
     }

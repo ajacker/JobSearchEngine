@@ -1,5 +1,6 @@
 package com.ajacker.jobspider.controller;
 
+import com.ajacker.jobspider.pojo.SpiderInfo;
 import com.ajacker.jobspider.spider.monitor.MyStatusMXBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +17,18 @@ import java.util.Map;
 @RestController
 public class SpiderController {
 
+
+    @Autowired
+    private SpiderInfo spiderInfo;
     @Autowired
     private MyStatusMXBean statusMXBean;
+
+    @RequestMapping(value = "/info", method = RequestMethod.POST)
+    public SpiderInfo getLeftPageCount() {
+        spiderInfo.updateInfo();
+        return spiderInfo;
+    }
+
 
     @RequestMapping(value = "/start", method = RequestMethod.POST)
     public Map<String, String> startSpider() {
