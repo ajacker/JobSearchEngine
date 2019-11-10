@@ -55,14 +55,14 @@
     </table>
     <div class="row" style="display: flex">
         <div class="input-group col-md-2">
-            <input class="form-control" id="cron-input" placeholder="cron表达式" type="text">
+            <input class="form-control" id="cron-input" placeholder="cron表达式" type="text" value="0 0/50 * * * ?">
             <span class="input-group-btn">
             <button class="btn btn-default" onclick="window.location.href='https://qqe2.com/cron'"
                     type="button">？</button>
           </span>
         </div>
         <div class="input-group col-md-2">
-            <input aria-describedby="basic-addon2" class="form-control" id="time-input" placeholder="运行时长"
+            <input aria-describedby="basic-addon2" class="form-control" id="time-input" placeholder="运行时长" value="20"
                    type="number">
             <span class="input-group-addon" id="keepTime">分钟</span>
         </div>
@@ -115,6 +115,37 @@
 <!-- Latest compiled and minified Locales -->
 <script src="js/i18n/bootstrap-table-zh-CN.min.js"></script>
 <script>
+    $(document).ready(function () {
+        var input = $('#cron-input');
+        var inputTime = $('#time-input');
+        var vdefault = input.val();
+        var vdefaultTime = inputTime.val();
+        input.focus(function () {
+            //获得焦点时，如果值为默认值，则设置为空
+            if ($(this).val() === vdefault) {
+                $(this).val("");
+            }
+        });
+        input.blur(function () {
+            //失去焦点时，如果值为空，则设置为默认值
+            if ($(this).val() === "") {
+                $(this).val(vdefault);
+            }
+        });
+        inputTime.focus(function () {
+            //获得焦点时，如果值为默认值，则设置为空
+            if ($(this).val() === vdefaultTime) {
+                $(this).val("");
+            }
+        });
+        inputTime.blur(function () {
+            //失去焦点时，如果值为空，则设置为默认值
+            if ($(this).val() === "") {
+                $(this).val(vdefaultTime);
+            }
+        });
+    });
+
     $(function () {
         window.setInterval(function () {
             $.ajax({
@@ -191,21 +222,60 @@
     function onReturn(data) {
         var status = data.status;
         var message = data.message;
+        console.log(status);
+        console.log(message);
         var type;
         switch (status) {
-            case "-1":
+            case -1:
                 type = "alert alert-danger alert-dismissible";
                 break;
-            case "0":
+            case 0:
                 type = "alert alert-warning alert-dismissible";
                 break;
-            case "1":
+            case 1:
                 type = "alert alert-success alert-dismissible";
                 break;
         }
         $("#message").prepend('<div class="' + type + '" role="alert">' +
             '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
             + message + '</div>')
+    }
+</script>
+<script>
+    var socket;
+    if (typeof (WebSocket) == "undefined") {
+        console.log("您的浏览器不支持WebSocket");
+    } else {
+        console.log("您的浏览器支持WebSocket");
+        //实现化WebSocket对象，指定要连接的服务器地址与端口  建立连接
+        //等同于socket = new WebSocket("ws://localhost:8083/checkcentersys/websocket/20");
+        socket = new WebSocket("ws://127.0.0.1:8081/websocket/666");
+        //打开事件
+        socket.onopen = function () {
+            console.log("Socket 已打开");
+            //socket.send("这是来自客户端的消息" + location.href + new Date());
+        };
+        //获得消息事件
+        socket.onmessage = function (msg) {
+            console.log("onMessage:" + msg.data);
+            if (msg.data != undefined) {
+                onReturn(jQuery.parseJSON(msg.data));
+            }
+        };
+        //关闭事件
+        socket.onclose = function () {
+            console.log("Socket已关闭");
+        };
+        //发生了错误事件
+        socket.onerror = function () {
+            alert("Socket发生了错误");
+            //此时可以尝试刷新页面
+        }
+        //离开页面时，关闭socket
+        //jquery1.8中已经被废弃，3.0中已经移除
+        // $(window).unload(function(){
+        //     socket.close();
+        //});
     }
 </script>
 </html>
