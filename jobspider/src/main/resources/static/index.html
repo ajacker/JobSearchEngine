@@ -54,14 +54,36 @@
         </tbody>
     </table>
     <div class="row" style="display: flex">
-        <div aria-label="..." class="btn-group btn-group-lg center-block" role="group">
+        <div class="input-group col-md-2">
+            <input class="form-control" id="cron-input" placeholder="cron表达式" type="text">
+            <span class="input-group-btn">
+            <button class="btn btn-default" onclick="window.location.href='https://qqe2.com/cron'"
+                    type="button">？</button>
+          </span>
+        </div>
+        <div class="input-group col-md-2">
+            <input aria-describedby="basic-addon2" class="form-control" id="time-input" placeholder="运行时长"
+                   type="number">
+            <span class="input-group-addon" id="keepTime">分钟</span>
+        </div>
+        <div aria-label="..." class="btn-group col-md-offset-1" role="group">
+            <button class="btn btn-success" id="startCron-btn" onclick="startTask()" type="button">
+                <span aria-hidden="true" class="glyphicon glyphicon-play"></span>
+                开始定时任务
+            </button>
+            <button class="btn btn-danger" id="stopCron-btn" onclick="stopTask()" type="button">
+                <span aria-hidden="true" class="glyphicon glyphicon-stop"></span>
+                停止定时任务
+            </button>
+        </div>
+        <div aria-label="..." class="btn-group col-md-offset-2" role="group">
             <button class="btn btn-success" id="start-btn" onclick="start()" type="button">
                 <span aria-hidden="true" class="glyphicon glyphicon-play"></span>
-                启动
+                启动爬虫
             </button>
             <button class="btn btn-danger" id="stop-btn" onclick="stop()" type="button">
                 <span aria-hidden="true" class="glyphicon glyphicon-stop"></span>
-                停止
+                停止爬虫
             </button>
         </div>
     </div>
@@ -127,6 +149,28 @@
             });
         }, 1000);
     });
+
+    function startTask() {
+        var cron = $('#cron-input').val();
+        var time = $('#time-input').val();
+        $.ajax({
+            type: "POST",
+            url: "/startTask",
+            data: {
+                'cron': cron,
+                'time': time
+            },
+            success: onReturn
+        });
+    }
+
+    function stopTask() {
+        $.ajax({
+            type: "POST",
+            url: "/stopTask",
+            success: onReturn
+        });
+    }
 
     function start() {
         $.ajax({

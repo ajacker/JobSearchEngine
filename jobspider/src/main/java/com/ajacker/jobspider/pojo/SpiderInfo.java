@@ -42,6 +42,7 @@ public class SpiderInfo {
         downloadSuccessRate = String.format("%.2f%%", downloadSuccess * 100f / totalPage);
         analyseSuccess = statusMXBean.getAnalyseSuccessPageCount();
         analyseError = statusMXBean.getAnalyseErrorPageCount();
+        analyseSuccess = Integer.min(analyseSuccess, downloadSuccess);
         analyseSuccessRate = String.format("%.2f%%", analyseSuccess * 100f / downloadSuccess);
         status = statusMXBean.getStatus();
     }
