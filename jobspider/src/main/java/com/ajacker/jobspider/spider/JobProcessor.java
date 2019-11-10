@@ -3,7 +3,6 @@ package com.ajacker.jobspider.spider;
 import com.ajacker.jobspider.pojo.JobInfo;
 import com.ajacker.jobspider.util.EducationUtil;
 import com.ajacker.jobspider.util.InfoUtil;
-import com.xzixi.algorithm.simhash.core.SimHasher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
@@ -31,7 +30,7 @@ public class JobProcessor implements PageProcessor {
     private final InfoUtil infoUtil;
     private final Site site;
 
-    public JobProcessor(InfoUtil infoUtil, Site site, SimHasher simHasher) {
+    public JobProcessor(InfoUtil infoUtil, Site site) {
         this.infoUtil = infoUtil;
         this.site = site;
     }

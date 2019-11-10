@@ -25,20 +25,20 @@ import java.util.concurrent.TimeUnit;
 @Lazy(false)
 public class SpiderScheduler implements SchedulingConfigurer {
 
-    public static String cron = "0 0 0-6 * * ? *";
-    public static int executeTime = 20;
-    int i = 0;
+    public static String cron = "0/30 * * * * ?";
     @Autowired
     private MyStatusMXBean statusMXBean;
     @Autowired
     private ThreadPoolTaskExecutor applicationTaskExecutor;
+    public static int executeTime = 20;
+    private int i = 0;
 
     /**
      * 设置定时任务的cron表达式
      *
      * @param cron cron表达式
      */
-    public void setCron(final String cron) {
+    public static void setCron(final String cron) {
         SpiderScheduler.cron = cron;
     }
 
@@ -47,15 +47,19 @@ public class SpiderScheduler implements SchedulingConfigurer {
      *
      * @param time 执行时间 单位分钟
      */
-    public void setExecuteTime(final int time) {
+    public static void setExecuteTime(final int time) {
         SpiderScheduler.executeTime = time;
     }
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
         scheduledTaskRegistrar.addTriggerTask(() -> {
-            statusMXBean.start();
-            log.info("第{}次爬虫任务在时间：{} 开始执行...", i, new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS").format(new Date()));
+            try {
+                statusMXBean.start();
+            } catch (Exception e) {
+                log.error("任务开启出错：", e);
+            }
+            log.info("第{}次爬虫任务在时间：{} 开始执行...", ++i, new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS").format(new Date()));
             //延迟终止爬虫
             applicationTaskExecutor.execute(() -> {
                 try {

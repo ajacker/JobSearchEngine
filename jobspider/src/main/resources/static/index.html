@@ -118,7 +118,11 @@
                             info.text('\t已停止');
                             break;
                     }
-
+                },
+                error: function () {
+                    var info = $('#status-span');
+                    info.css('color', 'red');
+                    info.text('\t服务器离线');
                 }
             });
         }, 1000);
