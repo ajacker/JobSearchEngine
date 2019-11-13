@@ -9,7 +9,7 @@
 <body>
 <div class="container">
     <div class="page-header row">
-        <h1>爬虫管理系统<small>信息监控+状态管理</small></h1>
+        <h1>索引节点状态监控<small>信息监控</small></h1>
         <h3>当前状态：
             <span aria-hidden="true" class="glyphicon glyphicon-asterisk" id="status-span" style="color: green"></span>
         </h3>
@@ -33,18 +33,33 @@
         </tbody>
         <thead>
         <tr>
-            <th>总页数</th>
-            <th>分析成功数量</th>
-            <th>分析失败数量</th>
-            <th>分析成功率</th>
+            <th>索引分段数量</th>
+            <th>占用内存</th>
+            <th>词条索引占用内存</th>
+            <th>保存字段占用内存</th>
         </tr>
         </thead>
         <tbody>
         <tr>
-            <td id="totalPage">获取中...</td>
-            <td id="analyseSuccess">获取中...</td>
-            <td id="analyseError">获取中...</td>
-            <td id="analyseSuccessRate">获取中...</td>
+            <td id="segmentCount">获取中...</td>
+            <td id="memoryBytes">获取中...</td>
+            <td id="termsBytes">获取中...</td>
+            <td id="storedBytes">获取中...</td>
+        </tr>
+        <thead>
+        <tr>
+            <th>词条向量占用内存</th>
+            <th>norms_memory</th>
+            <th>points_memory</th>
+            <th>doc_values_memory</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td id="vectorsBytes">获取中...</td>
+            <td id="normsBytes">获取中...</td>
+            <td id="pointsBytes">获取中...</td>
+            <td id="docBytes">获取中...</td>
         </tr>
         </tbody>
     </table>
@@ -59,7 +74,39 @@
 <script>
     $(function () {
         window.setInterval(function () {
-
+            $.ajax({
+                type: "POST",
+                url: "/info",
+                success: function (data) {
+                    $('#doc_count').html(data.docNum);
+                    $('#total_size').html(data.sizeBytes);
+                    $('#shards_num').html(data.shards);
+                    $('#status').html(data.status);
+                    $('#segmentCount').html(data.segmentCount);
+                    $('#memoryBytes').html(data.memoryBytes);
+                    $('#termsBytes').html(data.termsBytes);
+                    $('#storedBytes').html(data.storedBytes);
+                    $('#vectorsBytes').html(data.vectorsBytes);
+                    $('#normsBytes').html(data.normsBytes);
+                    $('#pointsBytes').html(data.pointsBytes);
+                    $('#docBytes').html(data.docBytes);
+                    var info = $('#status-span');
+                    switch (data.status) {
+                        case 'green':
+                            info.css('color', 'green');
+                            info.text('\tgreen');
+                            break;
+                        case 'yellow':
+                            info.css('color', 'yellow');
+                            info.text('\tyellow');
+                            break;
+                        case 'red':
+                            info.css('color', 'red');
+                            info.text('\tred');
+                            break;
+                    }
+                }
+            });
         }, 1000);
     });
 </script>

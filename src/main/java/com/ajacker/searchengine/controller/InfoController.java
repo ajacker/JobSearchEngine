@@ -16,7 +16,7 @@ public class InfoController {
     @Autowired
     private JobInfoServiceImpl jobInfoService;
 
-    @RequestMapping(name = "/info", method = RequestMethod.POST)
+    @RequestMapping(value = "/info", method = RequestMethod.POST)
     public IndexInfo getInfo() {
         return jobInfoService.getInfo();
     }
