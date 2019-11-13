@@ -1,8 +1,6 @@
 package com.ajacker.searchengine.dao;
 
 import com.ajacker.searchengine.pojo.JobInfo;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +11,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IJobInfoDao extends ElasticsearchRepository<JobInfo, String> {
 
-
-    Page<JobInfo> findByJobNameLikeOrJobInfoLikeOrJobAddrLike(String keyword1, String keyword2, String keyword3, Pageable page);
 
 }

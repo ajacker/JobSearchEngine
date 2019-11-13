@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>索引和节点状态监控</title>
+    <link href="webjars/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+<div class="container">
+    <div class="page-header row">
+        <h1>爬虫管理系统<small>信息监控+状态管理</small></h1>
+        <h3>当前状态：
+            <span aria-hidden="true" class="glyphicon glyphicon-asterisk" id="status-span" style="color: green"></span>
+        </h3>
+    </div>
+    <table class="table table-condensed row">
+        <thead>
+        <tr>
+            <th>文档数量</th>
+            <th>总储存大小</th>
+            <th>分片数</th>
+            <th>节点状态</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td id="doc_count">获取中...</td>
+            <td id="total_size">获取中...</td>
+            <td id="shards_num">获取中...</td>
+            <td id="status">获取中...</td>
+        </tr>
+        </tbody>
+        <thead>
+        <tr>
+            <th>总页数</th>
+            <th>分析成功数量</th>
+            <th>分析失败数量</th>
+            <th>分析成功率</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td id="totalPage">获取中...</td>
+            <td id="analyseSuccess">获取中...</td>
+            <td id="analyseError">获取中...</td>
+            <td id="analyseSuccessRate">获取中...</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+
+</body>
+<!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+<script src="webjars/jquery/3.4.1/jquery.min.js"></script>
+<!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+<script src="webjars/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script>
+    $(function () {
+        window.setInterval(function () {
+
+        }, 1000);
+    });
+</script>
+</html>

@@ -1,5 +1,6 @@
 package com.ajacker.searchengine.service;
 
+import com.ajacker.searchengine.pojo.IndexInfo;
 import com.ajacker.searchengine.pojo.JobInfo;
 import com.ajacker.searchengine.pojo.SearchParams;
 import com.ajacker.searchengine.pojo.TableJobResult;
@@ -26,4 +27,6 @@ public interface IJobInfoService {
     void saveAll(List<JobInfo> jobInfo);
 
     TableJobResult search(SearchParams params);
+
+    IndexInfo getInfo();
 }

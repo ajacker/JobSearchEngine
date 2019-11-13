@@ -1,21 +1,24 @@
 package com.ajacker.searchengine.service.impl;
 
 import com.ajacker.searchengine.dao.IJobInfoDao;
-import com.ajacker.searchengine.pojo.JobInfo;
-import com.ajacker.searchengine.pojo.JobResult;
-import com.ajacker.searchengine.pojo.SearchParams;
-import com.ajacker.searchengine.pojo.TableJobResult;
+import com.ajacker.searchengine.pojo.*;
 import com.ajacker.searchengine.service.IJobInfoService;
 import com.ajacker.searchengine.util.AreaUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -31,6 +34,11 @@ import java.util.stream.Collectors;
 public class JobInfoServiceImpl implements IJobInfoService {
     @Autowired
     private IJobInfoDao jobInfoDao;
+    @Autowired
+    private RestTemplate restTemplate;
+    @Value("${spring.elasticsearch.rest.uris}")
+    private String baseUrl;
+
 
     @Override
     public void save(JobInfo jobInfo) {
@@ -42,11 +50,13 @@ public class JobInfoServiceImpl implements IJobInfoService {
         jobInfoDao.saveAll(jobInfo);
     }
 
+
     @Override
     public TableJobResult search(SearchParams params) {
         int page = params.getPageNumber();
         int size = params.getPageSize();
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
+
         QueryBuilder query = QueryBuilders.matchAllQuery();
         //关键字搜索条件
         if (StringUtils.isNotBlank(params.getKeyword())) {
@@ -134,5 +144,53 @@ public class JobInfoServiceImpl implements IJobInfoService {
         return tableJobResult;
 
 
+    }
+
+    @Override
+    public IndexInfo getInfo() {
+        IndexInfo info = new IndexInfo();
+        //查询节点健康情况
+        String url = baseUrl + "/_cluster/health?pretty";
+        ResponseEntity<String> res = restTemplate.getForEntity(url, String.class);
+        JSONObject parse = JSON.parseObject(res.getBody());
+        info.setStatus(parse.getString("status"));
+        //查询节点其它信息
+        url = baseUrl + "/jobinfo/_stats/docs,store,segments";
+        res = restTemplate.getForEntity(url, String.class);
+        parse = JSONObject.parseObject(res.getBody());
+        //得到分片数
+        int shards = parse.getJSONObject("_shards").getIntValue("total");
+        info.setShards(shards);
+        JSONObject primaries = parse.getJSONObject("_all").getJSONObject("primaries");
+        //得到文档数量
+        int docNum = primaries.getJSONObject("docs").getIntValue("count");
+        info.setDocNum(docNum);
+        //得到存储大小
+        BigInteger sizeBytes = primaries.getJSONObject("store").getBigInteger("size_in_bytes");
+        info.setSizeBytes(sizeBytes);
+        //得到segments信息
+        JSONObject segments = primaries.getJSONObject("segments");
+        //得到分段数
+        int segmentCount = segments.getIntValue("count");
+        info.setSegmentCount(segmentCount);
+        //内存中文件大小
+        BigInteger memoryBytes = segments.getBigInteger("memory_in_bytes");
+        info.setMemoryBytes(memoryBytes);
+        //词条索引所占大小
+        BigInteger termsBytes = segments.getBigInteger("terms_memory_in_bytes");
+        info.setTermsBytes(termsBytes);
+        //保存字段所占大小
+        BigInteger storedBytes = segments.getBigInteger("stored_fields_memory_in_bytes");
+        info.setStoredBytes(storedBytes);
+        //词条向量内存大小
+        BigInteger vectorsBytes = segments.getBigInteger("term_vectors_memory_in_bytes");
+        info.setVectorsBytes(vectorsBytes);
+        BigInteger normsBytes = segments.getBigInteger("norms_memory_in_bytes");
+        info.setNormsBytes(normsBytes);
+        BigInteger pointsBytes = segments.getBigInteger("points_memory_in_bytes");
+        info.setPointsBytes(pointsBytes);
+        BigInteger docBytes = segments.getBigInteger("doc_values_memory_in_bytes");
+        info.setDocBytes(docBytes);
+        return info;
     }
 }
