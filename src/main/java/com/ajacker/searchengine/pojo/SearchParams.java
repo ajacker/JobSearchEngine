@@ -41,7 +41,11 @@ public class SearchParams {
      */
     private int pageSize;
     /**
-     * 排序方式asc/
+     * 排序列名
+     */
+    private String sortName;
+    /**
+     * 排序方式asc/desc
      */
     private String sortOrder;
 

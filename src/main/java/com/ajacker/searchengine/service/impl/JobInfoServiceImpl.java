@@ -8,6 +8,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.*;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -123,12 +125,17 @@ public class JobInfoServiceImpl implements IJobInfoService {
         }
         //构建查询语句
         queryBuilder.withQuery(query);
-        jobInfoDao.search(queryBuilder.build());
+        //设置排序方式
+        if (StringUtils.isNotBlank(params.getSortName())) {
+            SortOrder order = SortOrder.fromString(params.getSortOrder());
+            String sortName = "salary".equals(params.getSortName()) ? "salaryMin" : "time";
+            queryBuilder.withSort(SortBuilders.fieldSort(sortName).order(order));
+        }
         //设置分页
         queryBuilder.withPageable(PageRequest.of(page - 1, size));
         Page<JobInfo> pages = jobInfoDao.search(queryBuilder.build());
-        TableJobResult tableJobResult = new TableJobResult();
         //设置总结果数量
+        TableJobResult tableJobResult = new TableJobResult();
         tableJobResult.setTotal(pages.getTotalElements());
         //封装结果
         List<JobResult> rows = pages.getContent().stream().map(jobInfo -> {
