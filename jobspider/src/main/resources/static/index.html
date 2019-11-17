@@ -53,30 +53,73 @@
         </tr>
         </tbody>
     </table>
+    <div class="row">
+        <div class="panel panel-primary col-md-6" style="margin-top: 20px">
+            <div class="panel-heading">
+                <h3 class="panel-title">设置定时任务：</h3>
+            </div>
+            <div class="panel-body row">
+                <div class="input-group col-md-offset-2 col-md-8">
+                    <span class="input-group-addon">定时任务设置：</span>
+                    <input class="form-control" id="cron-input" placeholder="cron表达式" type="text"
+                           value="0 0/50 * * * ?">
+                    <span class="input-group-btn">
+                        <button aria-label="Help" class="btn btn-default"
+                                onclick="window.location.href='https://qqe2.com/cron'" type="button"><span
+                                class="glyphicon glyphicon-question-sign"></span></button>
+                    </span>
+                </div>
+                <div class="input-group col-md-offset-2 col-md-8">
+                    <span class="input-group-addon">运行时长设置：</span>
+                    <input aria-describedby="basic-addon2" class="form-control" id="time-input" placeholder="运行时长"
+                           type="number"
+                           value="20">
+                    <span class="input-group-addon" id="keepTime">分钟</span>
+                </div>
+                <div class="text-center" style="margin-top: 10px">
+                    <div aria-label="..." class="btn-group " role="group">
+                        <button class="btn btn-success" id="startCron-btn" onclick="startTask()" type="button">
+                            <span aria-hidden="true" class="glyphicon glyphicon-play"></span>
+                            开始定时任务
+                        </button>
+                        <button class="btn btn-danger" id="stopCron-btn" onclick="stopTask()" type="button">
+                            <span aria-hidden="true" class="glyphicon glyphicon-stop"></span>
+                            停止定时任务
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-primary col-md-6" style="margin-top: 20px">
+            <div class="panel-heading">
+                <h3 class="panel-title">调整爬虫速度：</h3>
+            </div>
+            <div class="panel-body row">
+                <div class="input-group col-md-offset-2 col-md-8">
+                    <span class="input-group-addon">线程数量设置：</span>
+                    <input class="form-control" id="thread-input" placeholder="线程数量" type="number">
+                </div>
+                <div class="input-group col-md-offset-2 col-md-8">
+                    <span class="input-group-addon">爬虫间隔设置：</span>
+                    <input aria-describedby="basic-addon2" class="form-control" id="sleepTime-input" placeholder="爬虫间隔"
+                           type="number">
+                    <span class="input-group-addon">ms</span>
+                </div>
+                <div class="text-center" style="margin-top: 10px">
+                    <div aria-label="..." class="btn-group " role="group">
+                        <button class="btn btn-success" id="apply-btn" onclick="startTask()" type="button">
+                            <span aria-hidden="true" class="glyphicon glyphicon-play"></span>
+                            应用设置
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row" style="display: flex">
-        <div class="input-group col-md-2">
-            <input class="form-control" id="cron-input" placeholder="cron表达式" type="text" value="0 0/50 * * * ?">
-            <span class="input-group-btn">
-            <button class="btn btn-default" onclick="window.location.href='https://qqe2.com/cron'"
-                    type="button">？</button>
-          </span>
-        </div>
-        <div class="input-group col-md-2">
-            <input aria-describedby="basic-addon2" class="form-control" id="time-input" placeholder="运行时长" value="20"
-                   type="number">
-            <span class="input-group-addon" id="keepTime">分钟</span>
-        </div>
-        <div aria-label="..." class="btn-group col-md-offset-1" role="group">
-            <button class="btn btn-success" id="startCron-btn" onclick="startTask()" type="button">
-                <span aria-hidden="true" class="glyphicon glyphicon-play"></span>
-                开始定时任务
-            </button>
-            <button class="btn btn-danger" id="stopCron-btn" onclick="stopTask()" type="button">
-                <span aria-hidden="true" class="glyphicon glyphicon-stop"></span>
-                停止定时任务
-            </button>
-        </div>
-        <div aria-label="..." class="btn-group col-md-offset-2" role="group">
+        <div aria-label="..." class="btn-group center-block" role="group">
+
             <button class="btn btn-success" id="start-btn" onclick="start()" type="button">
                 <span aria-hidden="true" class="glyphicon glyphicon-play"></span>
                 启动爬虫
@@ -87,7 +130,6 @@
             </button>
         </div>
     </div>
-
     <div class="panel panel-primary row" style="margin-top: 20px">
         <div class="panel-heading">
             <h3 class="panel-title">信息：</h3>
