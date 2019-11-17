@@ -1,12 +1,15 @@
 package com.ajacker.jobspider.controller;
 
+import com.ajacker.jobspider.config.SpiderConfig;
 import com.ajacker.jobspider.pojo.MsgInfo;
 import com.ajacker.jobspider.pojo.SpiderInfo;
+import com.ajacker.jobspider.spider.JobProcessor;
 import com.ajacker.jobspider.spider.monitor.MyStatusMXBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import us.codecraft.webmagic.Spider;
 
 /**
  * @author ajacker
@@ -20,6 +23,13 @@ public class SpiderController {
     private SpiderInfo spiderInfo;
     @Autowired
     private MyStatusMXBean statusMXBean;
+    @Autowired
+    private Spider spider;
+    @Autowired
+    private JobProcessor jobProcessor;
+    @Autowired
+    private SpiderConfig spiderConfig;
+
 
     @RequestMapping(value = "/info", method = RequestMethod.POST)
     public SpiderInfo getLeftPageCount() {
@@ -60,5 +70,15 @@ public class SpiderController {
         return info;
     }
 
-    //TODO 清空爬虫队列
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public MsgInfo updateSettings(int threadNum, int sleepTime) {
+        System.setProperty("THREAD_NUM", String.valueOf(threadNum));
+        System.setProperty("SLEEP_TIME", String.valueOf(sleepTime));
+        spider.stop();
+        spider.close();
+        spider = spiderConfig.spider().thread(threadNum);
+        jobProcessor.updateSleepTime(sleepTime);
+        spider.runAsync();
+        return new MsgInfo(1, "爬虫信息设置成功!");
+    }
 }

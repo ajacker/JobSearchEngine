@@ -107,7 +107,7 @@
                 </div>
                 <div class="text-center" style="margin-top: 10px">
                     <div aria-label="..." class="btn-group " role="group">
-                        <button class="btn btn-success" id="apply-btn" onclick="startTask()" type="button">
+                        <button class="btn btn-success" id="apply-btn" onclick="updateInfo()" type="button">
                             <span aria-hidden="true" class="glyphicon glyphicon-play"></span>
                             应用设置
                         </button>
@@ -223,6 +223,19 @@
         }, 1000);
     });
 
+    function updateInfo() {
+        var threadNum = $('#thread-input').val();
+        var sleepTime = $('#sleepTime-input').val();
+        $.ajax({
+            type: "POST",
+            url: "/update",
+            data: {
+                'threadNum': threadNum,
+                'sleepTime': sleepTime
+            },
+            success: onReturn
+        });
+    }
     function startTask() {
         var cron = $('#cron-input').val();
         var time = $('#time-input').val();

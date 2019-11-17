@@ -40,6 +40,9 @@ public class JobProcessor implements PageProcessor {
         return site;
     }
 
+    public void updateSleepTime(int sleepTime) {
+        site.setSleepTime(sleepTime);
+    }
 
     @Override
     public void process(Page page) {
