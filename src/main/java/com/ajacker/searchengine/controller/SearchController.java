@@ -1,5 +1,6 @@
 package com.ajacker.searchengine.controller;
 
+import com.ajacker.searchengine.pojo.AdvanceSearchParams;
 import com.ajacker.searchengine.pojo.SearchParams;
 import com.ajacker.searchengine.pojo.TableJobResult;
 import com.ajacker.searchengine.service.impl.JobInfoServiceImpl;
@@ -23,5 +24,11 @@ public class SearchController {
     public TableJobResult search(@RequestBody SearchParams params) {
         log.info("获得查询参数：{}", params);
         return jobInfoService.search(params);
+    }
+
+    @RequestMapping("/adsearch")
+    public TableJobResult advanceSearch(@RequestBody AdvanceSearchParams params) {
+        log.info("获得查询参数：{}", params);
+        return null;
     }
 }

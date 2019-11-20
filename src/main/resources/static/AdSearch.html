@@ -7,6 +7,11 @@
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
     <title>高级搜索</title>
+    <style>
+        .row {
+            margin-top: 10px;
+        }
+    </style>
     <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"
           rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css"
@@ -30,148 +35,163 @@
         </div>
     </nav>
 </div>
+<div class="row panel panel-default">
+
+    <div class="panel-heading" style="text-align: center">查询条件</div>
+    <div class="panel-body" style="padding-left: 60px">
 
 
-<div class="row">
-    <form class="form-inline col-md-offset-2">
-        <div class="form-group">
-            <label for="jobname">职位名</label>
-            <input class="form-control" id="jobname" placeholder="职位名" type="text">
-        </div>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <div class="form-group">
-            <label for="companyname">公司名</label>
-            <input class="form-control" id="companyname" placeholder="公司名" type="text">
-        </div>
-
-    </form>
-</div>
-<br>
-
-<div class="row">
-    <form class="form-inline col-md-offset-2">
-        <div class="form-group">
-
-            <label for="address1">地&nbsp;&nbsp;&nbsp;&nbsp;址</label>
-            <input class="form-control" id="address1" placeholder="某省" type="text">
-        </div>
-        &nbsp;
-        <div class="form-group">
-            <label for="address2"></label>
-            <input class="form-control" id="address2" placeholder="某市" type="text">
+        <div class="row">
+            <form class="form-inline">
+                <div class="form-group col-md-6">
+                    <label for="input-jobname">职位名</label>
+                    <input class="form-control" id="input-jobname" placeholder="职位名"
+                           style="width: 200px;margin-right: 10px"
+                           type="text">
+                    <select class="selectpicker" data-width="auto" id="select-jobname">
+                        <option value="1">模糊搜索</option>
+                        <option value="2">精确搜索</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="input-companyname">公司名</label>
+                    <input class="form-control" id="input-companyname" placeholder="公司名" type="text">
+                    <select class="selectpicker" data-width="auto" id="select-companyname">
+                        <option value="1">模糊搜索</option>
+                        <option value="2">精确搜索</option>
+                    </select>
+                </div>
+            </form>
         </div>
 
-    </form>
-
-</div>
-
-
-<div class="row">
-
-
-    <br>
-
-    <form class="form-inline col-md-offset-2">
-        <div class="form-group">
-
-
-            <label for="type-select">学 &nbsp;&nbsp;&nbsp;历</label>
-
-            <select class="selectpicker" data-width="auto" id="type-select">
-                <option>&lt;</option>
-                <option>=</option>
-
-            </select>
-
-            <label for="edu-select"></label>
-
-            <select class="selectpicker" data-width="auto" id="edu-select">
-                <option value="1">初中及以下</option>
-                <option value="2">高中/中技/中专</option>
-                <option value="3">大专</option>
-                <option value="4">本科</option>
-                <option value="5">硕士</option>
-                <option value="6">博士</option>
-            </select>
-
-
+        <div class="row">
+            <form class="form-inline col-md-6">
+                <div class="form-group">
+                    <label for="selectorProvence">地&nbsp;&nbsp;&nbsp;&nbsp;址</label>
+                    <select class="selectpicker" data-live-search="true" data-width="200px" id="selectorProvence"
+                            multiple>
+                        <option value="山东">山东</option>
+                        <option value="江苏">江苏</option>
+                        <option value="上海">上海</option>
+                        <option value="浙江">浙江</option>
+                        <option value="安徽">安徽</option>
+                        <option value="福建">福建</option>
+                        <option value="江西">江西</option>
+                        <option value="广东">广东</option>
+                        <option value="广西">广西</option>
+                        <option value="海南">海南</option>
+                        <option value="河南">河南</option>
+                        <option value="湖南">湖南</option>
+                        <option value="湖北">湖北</option>
+                        <option value="北京">北京</option>
+                        <option value="天津">天津</option>
+                        <option value="河北">河北</option>
+                        <option value="山西">山西</option>
+                        <option value="内蒙古">内蒙古</option>
+                        <option value="宁夏">宁夏</option>
+                        <option value="青海">青海</option>
+                        <option value="陕西">陕西</option>
+                        <option value="甘肃">甘肃</option>
+                        <option value="新疆">新疆</option>
+                        <option value="四川">四川</option>
+                        <option value="贵州">贵州</option>
+                        <option value="云南">云南</option>
+                        <option value="重庆">重庆</option>
+                        <option value="西藏">西藏</option>
+                        <option value="辽宁">辽宁</option>
+                        <option value="吉林">吉林</option>
+                        <option value="黑龙江">黑龙江</option>
+                        <option value="香港">香港</option>
+                        <option value="澳门">澳门</option>
+                        <option value="台湾">台湾</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="input-extra"></label>
+                    <input class="form-control" id="input-extra" placeholder="额外条件(例如市/县)"
+                           style="width: 200px;margin-left: 4px"
+                           type="text">
+                </div>
+            </form>
+            <form class="form-inline col-md-6">
+                <div class="form-group">
+                    <label for="type-select">学 &nbsp;&nbsp;&nbsp;历</label>
+                    <select class="selectpicker" data-width="auto" id="type-select">
+                        <option value="1">≤</option>
+                        <option value="2">=</option>
+                    </select>
+                    <label for="edu-select"></label>
+                    <select class="selectpicker" data-width="auto" id="edu-select">
+                        <option value="1">初中及以下</option>
+                        <option value="2">高中/中技/中专</option>
+                        <option value="3">大专</option>
+                        <option value="4">本科</option>
+                        <option value="5">硕士</option>
+                        <option value="6">博士</option>
+                    </select>
+                </div>
+            </form>
         </div>
-
-
-    </form>
-
-    <br>
-
-
-    <div class="row">
-        <form class="form-inline  col-md-offset-2" style="padding: 0;">
-            <div class="form-group ">
-                &nbsp;&nbsp;
-                <label for="salary1">薪&nbsp;&nbsp;&nbsp;&nbsp;资</label>
-                <div class='input-group date col-sm-5 ' id='salary1'>
-                    <input class="form-control" onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')" type='text'/>
-                    <span class="input-group-addon " style="margin-left:-20px ;">
+        <div class="row">
+            <form class="form-inline col-md-6">
+                <div class="form-group">
+                    <label for="minSalary">薪&nbsp;&nbsp;&nbsp;&nbsp;资</label>
+                    <div class='input-group date col-sm-5 ' id='minSalary'>
+                        <input class="form-control" id="input-minSalary"
+                               onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')" type='text'/>
+                        <span class="input-group-addon " style="margin-left:-20px ;">
                                 <span>K</span>
-                            </span>
+                    </span>
+                    </div>
                 </div>
+                <label class="" style="margin-left:-110px ;">————</label>
+                <div class="form-group" style="margin-left: 0;">
 
-            </div>
-            <label class="col-md-offset-1" style="margin-left:-110px ;">————</label>
-            <div class="form-group" style="margin-left: 0;">
-
-                <label for="salary2" style="margin-left: 0;"></label>
-                <div class='input-group date col-sm-6' id='salary2'>
-                    <input class="form-control" onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')" type='text'/>
-                    <span class="input-group-addon">
-                                <span class="">K</span>
-                            </span>
+                    <label for="maxSalary" style="margin-left: 0;"></label>
+                    <div class='input-group date col-sm-6' id='maxSalary'>
+                        <input class="form-control" id="input-maxSalary"
+                               onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')" type='text'/>
+                        <span class="input-group-addon">
+                        <span class="">K</span>
+                    </span>
+                    </div>
                 </div>
-
-            </div>
-
-        </form>
-
-
-    </div>
-
-
-    <br>
-    <div class="row">
-        <form class="form-inline col-md-offset-2">
-            <div class="form-group" style="margin-left: 0px">
-                &nbsp;&nbsp;
-                <label for="datetimepicker1">日&nbsp;&nbsp;&nbsp;&nbsp;期</label>
-                <div class='input-group date col-sm-7' id='datetimepicker1'>
-                    <input class="form-control" type='text'/>
-                    <span class="input-group-addon">
+            </form>
+            <form class="form-inline col-md-6">
+                <div class="form-group" style="margin-left: 0">
+                    <label for="datetimepicker1">日&nbsp;&nbsp;&nbsp;&nbsp;期</label>
+                    <div class='input-group date col-sm-7' id='datetimepicker1'>
+                        <input class="form-control" id="dateFrom" style="width: 160px" type='text'/>
+                        <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar margin-left:0px; margin-right: 0px;"></span>
-                        </span>
+                    </span>
+                    </div>
                 </div>
-
-            </div>
-            <label style="margin-left:-60px ;"> ————</label>
-            <div class="form-group" style="margin-left: 0px;">
-
-                <label for="datetimepicker2"></label>
-                <div class='input-group date col-sm-9' id='datetimepicker2'>
-                    <input class="form-control" type='text'/>
-                    <span class="input-group-addon">
+                <label style="margin-left:-60px ;"> ————</label>
+                <div class="form-group" style="margin-left: 0;">
+                    <label for="datetimepicker2"></label>
+                    <div class='input-group date col-sm-9' id='datetimepicker2'>
+                        <input class="form-control" id="dateTo" style="width: 160px" type='text'/>
+                        <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
-                        </span>
+                    </span>
+                    </div>
                 </div>
+            </form>
+        </div>
+        <div class="row text-center" style="margin-left:-60px ;">
 
-            </div>
-            <button class="btn btn-default" type="submit">精确搜索</button>
-        </form>
-
-        <!--显示结果的面板-->
-        <div class="row panel panel-default">
-            <!-- Default panel contents -->
-            <div class="panel-heading" style="text-align: center">查询结果</div>
-
-            <table id="table"></table>
+            <button class="btn btn-primary" onclick="search()" style="width: 120px" type="button">精确搜索</button>
 
         </div>
+    </div>
+</div>
+
+<!--显示结果的面板-->
+<div class="row panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading" style="text-align: center">查询结果</div>
+    <table id="table"></table>
     </div>
 
 
@@ -186,6 +206,80 @@
     <script src="js/bootstrap-table.min.js"></script>
     <!-- Latest compiled and minified Locales -->
     <script src="js/i18n/bootstrap-table-zh-CN.min.js"></script>
+<script>
+    function search() {
+        $("#table").bootstrapTable('refresh', {pageNumber: 1});
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        $('#table').bootstrapTable({
+            url: '/adsearch',
+            method: 'post',
+            queryParamsType: '',
+            queryParams: getParams,
+            pagination: true,
+            pageNumber: 1,
+            pageSize: 30,
+            pageList: [15, 30, 50, 100],
+            sidePagination: 'server',
+            paginationPreText: '上一页',
+            paginationNextText: '下一页',
+            sortable: true,
+            columns: [
+                {
+                    title: "职位名",
+                    field: 'jobName',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        actions.push('<a href=' + row.url + '>' + value + '</a> ');
+                        return actions.join('');
+                    }
+                },
+                {title: "公司名", field: 'companyName'},
+                {title: "工作地点", field: 'jobAddr'},
+                {title: "薪资", field: 'salary', sortable: true},
+                {title: "发布时间", field: 'time', sortable: true},
+                {title: "链接", field: 'url', visible: false}
+            ]
+
+
+        })
+    });
+
+    function getParams(params) {
+        var jobNameKeyWord = $('#input-jobname').val();
+        var jobNameType = $('#select-jobname').val();
+        var companyNameKeyWord = $('#input-companyname').val();
+        var companyNameType = $('#select-companyname').val();
+        var addressProvence = $('#selectorProvence').val();
+        var addressExtra = $('#input-extra').val();
+        var eduType = $('#type-select').val();
+        var eduLevel = $('#edu-select').val();
+        var minSalary = $('#input-minSalary').val();
+        var maxSalary = $('#input-maxSalary').val();
+        var dateFrom = $('#dateFrom').val();
+        var dateTo = $('#dateTo').val();
+        return {
+            pageNumber: params.pageNumber,
+            pageSize: params.pageSize,
+            sortName: params.sortName,
+            sortOrder: params.sortOrder,
+            jobNameKeyWord: jobNameKeyWord,
+            jobNameType: jobNameType,
+            companyNameKeyWord: companyNameKeyWord,
+            companyNameType: companyNameType,
+            addressProvence: addressProvence,
+            addressExtra: addressExtra,
+            eduType: eduType,
+            eduLevel: eduLevel,
+            minSalary: minSalary,
+            maxSalary: maxSalary,
+            dateFrom: dateFrom,
+            dateTo: dateTo
+        };
+    }
+</script>
     <script>
         $('#datetimepicker1').datetimepicker({
             locale: moment().locale('zh-cn'),
