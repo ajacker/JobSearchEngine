@@ -103,11 +103,31 @@ public class JobInfoServiceImpl implements IJobInfoService {
             query = QueryBuilders.boolQuery().must(extraQuery).must(query);
 
         }
+        //薪资范围搜索
+        if (params.getMinSalary() != 0 || params.getMaxSalary() != 0) {
+            int min = params.getMinSalary() * 1000;
+            int max = params.getMaxSalary() * 1000;
+            BoolQueryBuilder salaryRangeQuery = QueryBuilders.boolQuery()
+                    .must(QueryBuilders.rangeQuery("salaryMin").gt(min).includeLower(true))
+                    .must(QueryBuilders.rangeQuery("salaryMax").lt(max).includeUpper(true));
+            query = QueryBuilders.boolQuery().must(salaryRangeQuery).must(query);
+        }
+        //发布时间条件
+        if (params.getDateFrom() != null || params.getDateTo() != null) {
+            Calendar temp = Calendar.getInstance();
+            temp.setTime(params.getDateTo());
+            temp.add(Calendar.DAY_OF_YEAR, 1);
+            Date to = temp.getTime();
+            RangeQueryBuilder timeRangeQuery = QueryBuilders.rangeQuery("time")
+                    .format("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                    .from(params.getDateFrom())
+                    .to(to);
+            query = QueryBuilders.boolQuery().must(timeRangeQuery).must(query);
+        }
         //构建查询语句
         queryBuilder.withQuery(query);
         return getTableJobResult(queryBuilder, params.getSortName(), params.getSortOrder(), PageRequest.of(page - 1, size));
     }
-
 
 
     @Override
@@ -214,6 +234,7 @@ public class JobInfoServiceImpl implements IJobInfoService {
         tableJobResult.setRows(rows);
         return tableJobResult;
     }
+
     @Override
     public IndexInfo getInfo() {
         IndexInfo info = new IndexInfo();
