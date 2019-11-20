@@ -61,12 +61,12 @@ public class AdvanceSearchParams {
     /**
      * 起始日期
      */
-    @JsonFormat(pattern = "yyyy年MM月dd日", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date dateFrom;
     /**
      * 结束日期
      */
-    @JsonFormat(pattern = "yyyy年MM月dd日", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date dateTo;
     /**
      * 当前页码
