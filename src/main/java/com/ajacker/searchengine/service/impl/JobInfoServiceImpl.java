@@ -53,6 +53,43 @@ public class JobInfoServiceImpl implements IJobInfoService {
     }
 
 
+    public TableJobResult advanceSearch(AdvanceSearchParams params) {
+        int page = params.getPageNumber();
+        int size = params.getPageSize();
+        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
+
+        QueryBuilder query = QueryBuilders.matchAllQuery();
+        //工作名称搜索
+        if (StringUtils.isNotBlank(params.getJobNameKeyWord())) {
+            if (params.getJobNameType() == 1) {
+                //模糊搜索
+                MatchQueryBuilder jobNameQuery = QueryBuilders.matchQuery("jobName", params.getJobNameKeyWord());
+                query = QueryBuilders.boolQuery().must(jobNameQuery).must(query);
+            } else {
+                //精确搜索
+                MatchPhraseQueryBuilder jobNameQuery = QueryBuilders.matchPhraseQuery("jobName", params.getJobNameKeyWord());
+                query = QueryBuilders.boolQuery().must(jobNameQuery).must(query);
+            }
+        }
+        //公司名称搜索
+        if (StringUtils.isNotBlank(params.getCompanyNameKeyWord())) {
+            if (params.getCompanyNameType() == 1) {
+                //模糊搜索
+                MatchQueryBuilder companyNameQuery = QueryBuilders.matchQuery("companyName", params.getCompanyNameKeyWord());
+                query = QueryBuilders.boolQuery().must(companyNameQuery).must(query);
+            } else {
+                //精确搜索
+                MatchPhraseQueryBuilder companyNameQuery = QueryBuilders.matchPhraseQuery("companyName", params.getCompanyNameKeyWord());
+                query = QueryBuilders.boolQuery().must(companyNameQuery).must(query);
+            }
+        }
+        //构建查询语句
+        queryBuilder.withQuery(query);
+        return getTableJobResult(queryBuilder, params.getSortName(), params.getSortOrder(), PageRequest.of(page - 1, size));
+    }
+
+
+
     @Override
     public TableJobResult search(SearchParams params) {
         int page = params.getPageNumber();
@@ -63,12 +100,12 @@ public class JobInfoServiceImpl implements IJobInfoService {
         //关键字搜索条件
         if (StringUtils.isNotBlank(params.getKeyword())) {
             BoolQueryBuilder keywordQuery = QueryBuilders.boolQuery()
-                    .should(QueryBuilders.termQuery("jobName", params.getKeyword()))
-                    .should(QueryBuilders.termQuery("jobInfo", params.getKeyword()))
-                    .should(QueryBuilders.termQuery("jobAddr", params.getKeyword()))
-                    .should(QueryBuilders.termQuery("companyName", params.getKeyword()))
-                    .should(QueryBuilders.termQuery("companyInfo", params.getKeyword()))
-                    .should(QueryBuilders.termQuery("companyAddr", params.getKeyword()));
+                    .should(QueryBuilders.matchQuery("jobName", params.getKeyword()))
+                    .should(QueryBuilders.matchQuery("jobInfo", params.getKeyword()))
+                    .should(QueryBuilders.matchQuery("jobAddr", params.getKeyword()))
+                    .should(QueryBuilders.matchQuery("companyName", params.getKeyword()))
+                    .should(QueryBuilders.matchQuery("companyInfo", params.getKeyword()))
+                    .should(QueryBuilders.matchQuery("companyAddr", params.getKeyword()));
 
             query = QueryBuilders.boolQuery().must(keywordQuery).must(query);
         }
@@ -125,14 +162,21 @@ public class JobInfoServiceImpl implements IJobInfoService {
         }
         //构建查询语句
         queryBuilder.withQuery(query);
+        return getTableJobResult(queryBuilder, params.getSortName(), params.getSortOrder(), PageRequest.of(page - 1, size));
+
+
+    }
+
+    private TableJobResult getTableJobResult(NativeSearchQueryBuilder queryBuilder, String sName, String sortOrder, PageRequest of) {
+
         //设置排序方式
-        if (StringUtils.isNotBlank(params.getSortName())) {
-            SortOrder order = SortOrder.fromString(params.getSortOrder());
-            String sortName = "salary".equals(params.getSortName()) ? "salaryMin" : "time";
+        if (StringUtils.isNotBlank(sName)) {
+            SortOrder order = SortOrder.fromString(sortOrder);
+            String sortName = "salary".equals(sName) ? "salaryMin" : "time";
             queryBuilder.withSort(SortBuilders.fieldSort(sortName).order(order));
         }
         //设置分页
-        queryBuilder.withPageable(PageRequest.of(page - 1, size));
+        queryBuilder.withPageable(of);
         Page<JobInfo> pages = jobInfoDao.search(queryBuilder.build());
         //设置总结果数量
         TableJobResult tableJobResult = new TableJobResult();
@@ -149,10 +193,7 @@ public class JobInfoServiceImpl implements IJobInfoService {
         }).collect(Collectors.toList());
         tableJobResult.setRows(rows);
         return tableJobResult;
-
-
     }
-
     @Override
     public IndexInfo getInfo() {
         IndexInfo info = new IndexInfo();
@@ -200,4 +241,5 @@ public class JobInfoServiceImpl implements IJobInfoService {
         info.setDocBytes(docBytes);
         return info;
     }
+
 }

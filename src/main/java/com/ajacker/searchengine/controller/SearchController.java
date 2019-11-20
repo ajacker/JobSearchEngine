@@ -29,6 +29,6 @@ public class SearchController {
     @RequestMapping("/adsearch")
     public TableJobResult advanceSearch(@RequestBody AdvanceSearchParams params) {
         log.info("获得查询参数：{}", params);
-        return null;
+        return jobInfoService.advanceSearch(params);
     }
 }
