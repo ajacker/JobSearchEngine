@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>高级搜索</title>
+    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"
+          rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css"
+          rel="stylesheet">
+    <!-- Bootstrap -->
+
+    <link href="webjars/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.css" rel="stylesheet">
+
+
+</head>
+
+<body class="container">
+<div class="row">
+    <!--导航条-->
+    <nav class="navbar navbar-default col-1" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">高级条件查询</a>
+            </div>
+        </div>
+    </nav>
+</div>
+
+
+<div class="row">
+    <form class="form-inline col-md-offset-2">
+        <div class="form-group">
+            <label for="jobname">职位名</label>
+            <input class="form-control" id="jobname" placeholder="职位名" type="text">
+        </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div class="form-group">
+            <label for="companyname">公司名</label>
+            <input class="form-control" id="companyname" placeholder="公司名" type="text">
+        </div>
+
+    </form>
+</div>
+<br>
+
+<div class="row">
+    <form class="form-inline col-md-offset-2">
+        <div class="form-group">
+
+            <label for="address1">地&nbsp;&nbsp;&nbsp;&nbsp;址</label>
+            <input class="form-control" id="address1" placeholder="某省" type="text">
+        </div>
+        &nbsp;
+        <div class="form-group">
+            <label for="address2"></label>
+            <input class="form-control" id="address2" placeholder="某市" type="text">
+        </div>
+
+    </form>
+
+</div>
+
+
+<div class="row">
+
+
+    <br>
+
+    <form class="form-inline col-md-offset-2">
+        <div class="form-group">
+
+
+            <label for="type-select">学 &nbsp;&nbsp;&nbsp;历</label>
+
+            <select class="selectpicker" data-width="auto" id="type-select">
+                <option>&lt;</option>
+                <option>=</option>
+
+            </select>
+
+            <label for="edu-select"></label>
+
+            <select class="selectpicker" data-width="auto" id="edu-select">
+                <option value="1">初中及以下</option>
+                <option value="2">高中/中技/中专</option>
+                <option value="3">大专</option>
+                <option value="4">本科</option>
+                <option value="5">硕士</option>
+                <option value="6">博士</option>
+            </select>
+
+
+        </div>
+
+
+    </form>
+
+    <br>
+
+
+    <div class="row">
+        <form class="form-inline  col-md-offset-2" style="padding: 0;">
+            <div class="form-group ">
+                &nbsp;&nbsp;
+                <label for="salary1">薪&nbsp;&nbsp;&nbsp;&nbsp;资</label>
+                <div class='input-group date col-sm-5 ' id='salary1'>
+                    <input class="form-control" onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')" type='text'/>
+                    <span class="input-group-addon " style="margin-left:-20px ;">
+                                <span>K</span>
+                            </span>
+                </div>
+
+            </div>
+            <label class="col-md-offset-1" style="margin-left:-110px ;">————</label>
+            <div class="form-group" style="margin-left: 0;">
+
+                <label for="salary2" style="margin-left: 0;"></label>
+                <div class='input-group date col-sm-6' id='salary2'>
+                    <input class="form-control" onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')" type='text'/>
+                    <span class="input-group-addon">
+                                <span class="">K</span>
+                            </span>
+                </div>
+
+            </div>
+
+        </form>
+
+
+    </div>
+
+
+    <br>
+    <div class="row">
+        <form class="form-inline col-md-offset-2">
+            <div class="form-group" style="margin-left: 0px">
+                &nbsp;&nbsp;
+                <label for="datetimepicker1">日&nbsp;&nbsp;&nbsp;&nbsp;期</label>
+                <div class='input-group date col-sm-7' id='datetimepicker1'>
+                    <input class="form-control" type='text'/>
+                    <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar margin-left:0px; margin-right: 0px;"></span>
+                        </span>
+                </div>
+
+            </div>
+            <label style="margin-left:-60px ;"> ————</label>
+            <div class="form-group" style="margin-left: 0px;">
+
+                <label for="datetimepicker2"></label>
+                <div class='input-group date col-sm-9' id='datetimepicker2'>
+                    <input class="form-control" type='text'/>
+                    <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                </div>
+
+            </div>
+            <button class="btn btn-default" type="submit">精确搜索</button>
+        </form>
+
+        <!--显示结果的面板-->
+        <div class="row panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading" style="text-align: center">查询结果</div>
+
+            <table id="table"></table>
+
+        </div>
+    </div>
+
+
+    <script src="webjars/jquery/3.4.1/jquery.min.js"></script>
+    <script src="webjars/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="js/bootstrap-select.js"></script>
+    <!-- (Optional) Latest compiled and minified JavaScript translation files -->
+    <script src="js/i18n/defaults-zh_CN.js"></script>
+    <script src="js/i18n/moment-with-locales.min.js"></script>
+    <script src="js/bootstrap-datetimepicker.min.js"></script>
+    <script src="js/bootstrap-table.min.js"></script>
+    <!-- Latest compiled and minified Locales -->
+    <script src="js/i18n/bootstrap-table-zh-CN.min.js"></script>
+    <script>
+        $('#datetimepicker1').datetimepicker({
+            locale: moment().locale('zh-cn'),
+            format: 'YYYY年MM月DD日'
+        });
+
+        $('#datetimepicker2').datetimepicker({
+            locale: moment().locale('zh-cn'),
+            format: 'YYYY年MM月DD日'
+        });
+    </script>
+
+
+</body>
+
+</html>
