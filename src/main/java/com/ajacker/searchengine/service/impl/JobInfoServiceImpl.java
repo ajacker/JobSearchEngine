@@ -6,6 +6,7 @@ import com.ajacker.searchengine.service.IJobInfoService;
 import com.ajacker.searchengine.util.AreaUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.sort.SortBuilders;
@@ -82,6 +83,25 @@ public class JobInfoServiceImpl implements IJobInfoService {
                 MatchPhraseQueryBuilder companyNameQuery = QueryBuilders.matchPhraseQuery("companyName", params.getCompanyNameKeyWord());
                 query = QueryBuilders.boolQuery().must(companyNameQuery).must(query);
             }
+        }
+        //地址省份搜索
+        List<String> provinces = params.getAddressProvence();
+        if (CollectionUtils.isNotEmpty(provinces)) {
+            BoolQueryBuilder provincesBuilder = new BoolQueryBuilder();
+            for (String province : provinces) {
+                TermsQueryBuilder temp = QueryBuilders.termsQuery("jobAddr",
+                        AreaUtil.province.get(province));
+                provincesBuilder = provincesBuilder.should(temp);
+            }
+            query = QueryBuilders.boolQuery().must(provincesBuilder).must(query);
+        }
+        //地区额外关键字搜索
+        if (StringUtils.isNotBlank(params.getAddressExtra())) {
+            BoolQueryBuilder extraQuery = QueryBuilders.boolQuery()
+                    .should(QueryBuilders.matchQuery("jobAddr", params.getAddressExtra()))
+                    .should(QueryBuilders.matchQuery("companyAddr", params.getAddressExtra()));
+            query = QueryBuilders.boolQuery().must(extraQuery).must(query);
+
         }
         //构建查询语句
         queryBuilder.withQuery(query);
