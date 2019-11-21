@@ -7,6 +7,7 @@ import com.ajacker.jobspider.spider.MyRedisScheduler;
 import com.ajacker.jobspider.spider.monitor.MySpiderMXBean;
 import com.ajacker.jobspider.util.InfoUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,19 +35,16 @@ public class SpiderConfig {
     private int threadNum;
     @Value("${spider.sleepTime}")
     private int sleepTime;
-    private final InfoUtil infoUtil;
-    private final MyDownloader downloader;
-    private final MyRedisScheduler scheduler;
-    private final ElasticSearchPipeLine elasticSearchPipeLine;
-    private final JobProcessor jobProcessor;
-
-    public SpiderConfig(InfoUtil infoUtil, MyDownloader downloader, MyRedisScheduler scheduler, ElasticSearchPipeLine elasticSearchPipeLine, JobProcessor jobProcessor) {
-        this.infoUtil = infoUtil;
-        this.downloader = downloader;
-        this.scheduler = scheduler;
-        this.elasticSearchPipeLine = elasticSearchPipeLine;
-        this.jobProcessor = jobProcessor;
-    }
+    @Autowired
+    private InfoUtil infoUtil;
+    @Autowired
+    private MyDownloader downloader;
+    @Autowired
+    private MyRedisScheduler scheduler;
+    @Autowired
+    private ElasticSearchPipeLine elasticSearchPipeLine;
+    @Autowired
+    private JobProcessor jobProcessor;
 
     @Bean
     public Spider spider() {
