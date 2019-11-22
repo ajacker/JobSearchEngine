@@ -173,13 +173,14 @@ public class JobInfoServiceImpl implements IJobInfoService {
         }
         //发布时间条件
         if (params.getTime() != 0) {
-            Date to = new Date();
             Calendar rightNow = Calendar.getInstance();
-            rightNow.setTime(to);
-            rightNow.add(Calendar.DAY_OF_YEAR, (params.getTime() - 1) * -1);
             rightNow.set(Calendar.HOUR_OF_DAY, 0);
             rightNow.set(Calendar.MINUTE, 0);
             rightNow.set(Calendar.SECOND, 0);
+            rightNow.add(Calendar.DAY_OF_YEAR, 1);
+            Date to = rightNow.getTime();
+            rightNow.add(Calendar.DAY_OF_YEAR, (params.getTime()) * -1);
+
             Date from = rightNow.getTime();
             RangeQueryBuilder timeRangeQuery = QueryBuilders.rangeQuery("time")
                     .format("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")

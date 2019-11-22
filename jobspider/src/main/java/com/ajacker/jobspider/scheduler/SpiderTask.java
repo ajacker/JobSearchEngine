@@ -50,7 +50,7 @@ public class SpiderTask implements Runnable {
         //延迟终止爬虫
         applicationTaskExecutor.execute(() -> {
             try {
-                TimeUnit.SECONDS.sleep(executeTime);
+                TimeUnit.MINUTES.sleep(executeTime);
             } catch (InterruptedException e) {
                 log.error("定时爬虫终止异常！", e);
             }
