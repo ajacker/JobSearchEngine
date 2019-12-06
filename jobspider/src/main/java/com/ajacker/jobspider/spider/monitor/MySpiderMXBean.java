@@ -32,7 +32,7 @@ public class MySpiderMXBean extends SpiderStatus implements MyStatusMXBean {
 
     @Override
     public int getAnalyseSuccessPageCount() {
-        return infoUtil.getAnalyseSuccess().intValue();
+        return getDownloadSuccessPageCount() - getAnalyseErrorPageCount();
     }
 
     @Override

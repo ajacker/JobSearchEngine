@@ -82,7 +82,7 @@ public class MyRedisScheduler extends DuplicateRemovedScheduler implements Monit
                 return tmp;
             }
         }
-        return null;
+        return new Request(exceptUrl);
     }
 
     private String getSetKey(Task task) {
